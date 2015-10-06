@@ -1,6 +1,7 @@
 ﻿define(["hero"], function (hero) {
 
     return {
+        listHeight : 20,
         createHeroesList: function () {
             console.log("creating Heroes list...")
 
