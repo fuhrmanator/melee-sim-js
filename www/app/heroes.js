@@ -1,4 +1,4 @@
-﻿define(["hero"], function (hero) {
+﻿define(function () {
 
     return {
         listHeight : 20,
