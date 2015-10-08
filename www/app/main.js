@@ -2,12 +2,12 @@
     // Load any app-specific modules
     // with a relative require call,
     // like:
+    // var Hero = require('./Hero.js');
+    // var h1 = new Hero("Joe", 12);
+    // var h2 = new Hero("Mary", 12);
+    // console.log(h1.getName(), h2.getName());
+    
     var simulator = require('./simulator.js');
-    if (typeof simulator != 'undefined') {
-        
-    } else {
-        alert("Failure");
-    }
 
     // Load library/vendor modules using
     // full IDs, like:
@@ -19,8 +19,7 @@
     heroes.createHeroesList();
 
     var selectElement = document.getElementById("heroesSelected");
-    console.log(selectElement);
-    //selectElement.applyElement('size=' + heroes.listHeight);
+    selectElement.size = heroes.listHeight;
     document.getElementById('startSimulation').onclick = simulator.start;
 });
 

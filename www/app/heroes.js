@@ -1,4 +1,4 @@
-﻿define(function () {
+﻿define(["./Hero"], function (Hero) {
 
     return {
         listHeight : 20,
