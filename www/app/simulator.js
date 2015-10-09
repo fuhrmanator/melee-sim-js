@@ -1,5 +1,6 @@
-﻿define(["./heroes", "./Hero", "./Weapon"], function (heroes, Hero, Weapon) {
+﻿define("simulator", ["./heroes", "./Hero", "./Weapon"], function (heroes, Hero, Weapon) {
   return {
+    that : this, // save since will be called on-click
     getSelectValues: function(selectElement) {
       var result = [];
       var options = selectElement && selectElement.options;
@@ -18,7 +19,7 @@
       console.log('Starting simulation');
       var selectElement = document.getElementById("heroesSelected");
       console.log(selectElement);
-      var selectedHeroes = this.getSelectValues(selectElement);
+      var selectedHeroes = that.getSelectValues(selectElement);
       alert(selectedHeroes);
     }
   };
