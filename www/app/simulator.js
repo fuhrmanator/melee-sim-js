@@ -1,26 +1,30 @@
-﻿define("simulator", ["./heroes", "./Hero", "./Weapon"], function (heroes, Hero, Weapon) {
+﻿define(["./HeroesSingleton", "./Hero", "./Weapon"], function (HeroesSingleton, Hero, Weapon) {
   return {
-    that : this, // save since will be called on-click
-    getSelectValues: function(selectElement) {
-      var result = [];
-      var options = selectElement && selectElement.options;
-      var opt;
-
-      for (var i = 0, iLen = options.length; i < iLen; i++) {
-        opt = options[i];
-
-        if (opt.selected) {
-          result.push(opt.value || opt.text);
-        }
-      }
-      return result;
-    },
     start: function () {
+      // http://stackoverflow.com/a/5867262/1168342
+      function getSelectedValues (selectElement) {
+        var result = [];
+        var options = selectElement && selectElement.options;
+        var opt;
+
+        for (var i = 0, iLen = options.length; i < iLen; i++) {
+          opt = options[i];
+
+          if (opt.selected) {
+            result.push(opt.value || opt.text);
+          }
+        }
+        return result;
+      }
       console.log('Starting simulation');
       var selectElement = document.getElementById("heroesSelected");
-      console.log(selectElement);
-      var selectedHeroes = that.getSelectValues(selectElement);
-      alert(selectedHeroes);
+      var selectedHeroes = getSelectedValues(selectElement);
+      HeroesSingleton.displayHeroesList();
+      selectedHeroes.forEach(function(heroName) {
+        console.log("Selected hero: '" + heroName + "'" + " len = " + heroName.length);
+        //var hero = heroes.heroList[heroName];
+        //console.log(hero.getName() + ", " + hero.getWeapon());
+      }, this);
     }
   };
 });

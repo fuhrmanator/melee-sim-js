@@ -1,6 +1,10 @@
 ﻿define(function () {
+    // Pattern from http://stackoverflow.com/a/10280735/1168342
     // Start with the constructor
     function Weapon(name, st, dice, modifier, isTwoHanded, isThrown, isPole) {
+        if (!(this instanceof Weapon)) {
+            throw new TypeError("Weapon constructor cannot be called as a function.");
+        }
         this.name = name;
         this.st = st;
         this.dice = dice;
