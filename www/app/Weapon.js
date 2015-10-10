@@ -1,4 +1,4 @@
-﻿define(function () {
+﻿define(["./Die","./simulator","require"],function (Die, simulator, require) {
     "use strict";
     // Pattern from http://stackoverflow.com/a/10280735/1168342
     // Start with the constructor
@@ -31,11 +31,31 @@
     Weapon.prototype.isPole = function () {
         return this.isPole;
     }
+    
+    Weapon.prototype.doDamage = function () {
+		if (require("./simulator").isVerbose())
+			console.log(
+					"Rolling for weapon doing "
+							+ this.dice
+							+ "d"
+							+ ((this.modifier > 0) ? "+" : "")
+							+ ((this.modifier != 0) ? this.modifier : "")
+							+ " damage.\n");
+        var damage = 0;
+        for (var i = 0; i < this.dice; i++)
+        {
+            damage += Die.roll();
+        }
+        damage += this.modifier;
+        if (damage < 0) damage = 0;
+        return damage;
+    }
 
     Weapon.prototype.toString = function () {
         return this.name + " (" + this.dice + "D" + ((this.modifier > 0) ? "+" : "") + ((this.modifier != 0) ? this.modifier : "") + ")";
     }
 
+    Weapon.NONE = new Weapon("None", 0, 0, 0, false, false, false);
     Weapon.DAGGER = new Weapon("Dagger", 0, 1, -1, true, false, false); 
     Weapon.RAPIER = new Weapon("Rapier", 9, 1, 0, false, false, false);
     Weapon.CLUB = new Weapon("Club", 9, 1, 0, true, false, false);

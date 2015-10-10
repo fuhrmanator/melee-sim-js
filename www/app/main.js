@@ -15,7 +15,7 @@
 
     var HeroesSingleton = require('./HeroesSingleton');
     HeroesSingleton.createHeroesList();
-    HeroesSingleton.displayHeroesList();
+    //HeroesSingleton.displayHeroesList();
 
     var selectElement = document.getElementById("heroesSelected");
     selectElement.size = HeroesSingleton.getListHeight();

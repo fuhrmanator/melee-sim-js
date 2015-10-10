@@ -1,10 +1,17 @@
-﻿define(["./HeroesSingleton", "./Hero", "./Weapon"], function (HeroesSingleton, Hero, Weapon) {
+﻿define(["./HeroesSingleton", "./Hero", "./Weapon", "./Game"], function (HeroesSingleton, Hero, Weapon, Game) {
     "use strict";
     return {
+        isVerboseChecked : true,
+        isVerbose : function () {
+            return this.isVerboseChecked;
+        },
         start: function () {
+            this.isVerboseChecked = document.getElementById("verboseOutput").checked;
 
-            function tryAllCombinations(heroSet) {
+            function tryAllCombinations(heroSet, boutCount) {
                 var heroWins = {};  // map of hero and integer
+                var game = null;
+                var score = [2];
                 heroSet.forEach(function (hero1) {
                     heroSet.forEach(function (hero2) {
                         heroWins[hero1.getName() + hero2.getName()] = 0;
@@ -22,7 +29,30 @@
                     }
                     for ( ; h2 < heroSet.length; h2++) {
                         hero2 = heroSet[h2];
+                        var sumRounds = 0;
+                        score[0] = score[1] = 0;
                         console.log('Bout: ' + hero1.getName() + ' vs. ' + hero2.getName());
+                        
+                        for (var bout = 0; bout < boutCount; bout++) {
+                            // clone heroes (resets them) prior to fighting
+                            var fightingHero1 = Object.create(hero1);
+                            var fightingHero2 = Object.create(hero2);
+                            console.log(fightingHero1);
+                            console.log(fightingHero2);
+                            game = new Game(fightingHero1, fightingHero2);
+                            var winningFighter = game.fightToTheDeath();
+                            
+                            if (winningFighter !== null) {
+                                var losingFighter = (winningFighter == fightingHero1 ? fightingHero2 : fightingHero1);
+                                score[(winningFighter == fightingHero1 ? 0 : 1)] ++;
+                                heroWins[winningFighter.getName() + losingFighter.getName()] ++;
+                            }
+                            sumRounds += game.round;
+                        }
+                        /**
+                         * Update the total stats for these heroes
+                         */
+                        
                     }
                     
                 }
@@ -55,9 +85,11 @@
                 var hero = HeroesSingleton.getHeroList()[heroName];
                 heroSet.push(hero);
             }, this);
-            console.log(heroSet);
+            //console.log(heroSet);
+            
+            var boutCount = document.getElementById("boutsPerMatchup").value;
 
-            tryAllCombinations(heroSet);
+            tryAllCombinations(heroSet, boutCount);
         }
     };
 });

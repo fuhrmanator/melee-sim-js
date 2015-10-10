@@ -3,7 +3,7 @@
     // Start with the constructor
     function Armor(name, hitsStopped, maAdj, dxAdj) {
         this.name = name;
-        this.hitsStopped = hitsStopped;
+        this._hitsStopped = hitsStopped;
         this.maAdj = maAdj;
         this.dxAdj = dxAdj;
     }
@@ -14,7 +14,7 @@
     };
 
     Armor.prototype.hitsStopped = function () {
-        return this.hitsStopped;
+        return this._hitsStopped;
     }
 
     Armor.prototype.getDexAdjustment = function () {
@@ -22,7 +22,7 @@
     }
 
     Armor.prototype.toString = function () {
-        return this.name + " (" + this.hitsStopped + ")";
+        return this.name + " (" + this._hitsStopped + ")";
     }
 
     Armor.NO_ARMOR = new Armor("No armor", 0, 0, 0);

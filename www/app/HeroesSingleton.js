@@ -238,6 +238,7 @@
             // add to hashmap
             //            console.log("Hero name (index to map): '" + heroName + "'" + " len = " + heroName.length);
             heroList[heroName] = hero;
+            //console.log(hero.toString());
             // http://stackoverflow.com/a/7196296/1168342
             // this.heroList.push({key:heroName, value:hero});
             //console.log("Hero list = " + Object.keys(this.heroList));

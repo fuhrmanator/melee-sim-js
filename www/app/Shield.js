@@ -3,8 +3,8 @@
     // Start with the constructor
     function Shield(name, hitsStopped, dxAdj) {
         this.name = name;
-        this.hitsStopped = hitsStopped;
-        this.hitsStopped = dxAdj;
+        this._hitsStopped = hitsStopped;
+        this.dxAdj = dxAdj;
     }
 
     // Now add methods
@@ -13,7 +13,7 @@
     };
 
     Shield.prototype.hitsStopped = function () {
-        return this.hitsStopped;
+        return this._hitsStopped;
     };
 
     Shield.prototype.getDexAdjustment = function () {
@@ -21,7 +21,7 @@
     };
 
     Shield.prototype.toString = function () {
-        return this.name + " (" + this.hitsStopped + ")";
+        return this.name + " (" + this._hitsStopped + ")";
     }
 
     Shield.NO_SHIELD = new Shield("No shield", 0, 0);
