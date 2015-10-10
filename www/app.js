@@ -4,9 +4,6 @@
 // Configure loading modules from the lib directory,
 // except for 'app' ones, which are in a sibling
 // directory.
-
-console.log("app.js: starting");
-
 requirejs.config({
     baseUrl: 'lib',
     paths: {
@@ -16,5 +13,4 @@ requirejs.config({
 
 // Start loading the main app file. Put all of
 // your application logic in there.
-console.log("app.js: requirejs app/main");
 requirejs(['app/main']);

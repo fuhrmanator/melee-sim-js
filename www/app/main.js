@@ -18,6 +18,6 @@
     HeroesSingleton.displayHeroesList();
 
     var selectElement = document.getElementById("heroesSelected");
-    selectElement.size = HeroesSingleton.listHeight;
+    selectElement.size = HeroesSingleton.getListHeight();
     document.getElementById('startSimulation').onclick = simulator.start;
 });
