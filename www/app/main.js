@@ -1,4 +1,5 @@
 ﻿define(function (require) {
+    "use strict";
     // Load any app-specific modules
     // with a relative require call,
     // like:    
@@ -15,7 +16,7 @@
     var HeroesSingleton = require('./HeroesSingleton');
     HeroesSingleton.createHeroesList();
     HeroesSingleton.displayHeroesList();
-    
+
     var selectElement = document.getElementById("heroesSelected");
     selectElement.size = HeroesSingleton.listHeight;
     document.getElementById('startSimulation').onclick = simulator.start;

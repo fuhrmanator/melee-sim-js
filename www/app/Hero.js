@@ -1,4 +1,5 @@
 ﻿define(function () {
+    "use strict";
     // Start with the constructor
     function Hero(name, st, dx, weapon, armor, shield) {
         this.name = name;

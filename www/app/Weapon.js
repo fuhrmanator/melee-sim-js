@@ -1,4 +1,5 @@
 ﻿define(function () {
+    "use strict";
     // Pattern from http://stackoverflow.com/a/10280735/1168342
     // Start with the constructor
     function Weapon(name, st, dice, modifier, isTwoHanded, isThrown, isPole) {
