@@ -1,4 +1,4 @@
-﻿define(["./Hero", "./Weapon", "./Armor", "./Shield", "./Die", "./simulator", "require"], function (Hero, Weapon, Armor, Shield, Die, simulator, require) {
+﻿define(["./Hero", "./Weapon", "./Armor", "./Shield", "./Die", "./controller", "require"], function (Hero, Weapon, Armor, Shield, Die, controller, require) {
     "use strict";
     // Pattern from http://stackoverflow.com/a/10280735/1168342
     // Start with the constructor
@@ -22,20 +22,17 @@
         constructor: Game,
         fightToTheDeath: function () {
             var winner = null;
-            console.log("Fight to the death!");
-            console.log(this.hero1.isConscious() + ", " + this.hero1.getDroppedWeapon() + ", " + this.hero1.getReadiedWeapon());
-            console.log(this.hero2.isConscious() + ", " + this.hero2.getDroppedWeapon() + ", " + this.hero2.getReadiedWeapon());
             while (this.hero1.isConscious() && this.hero2.isConscious() &&
-                ((this.hero1.getDroppedWeapon() != Weapon.NONE
-                    || this.hero1.getReadiedWeapon() != Weapon.NONE)
-                    || (this.hero2.getDroppedWeapon() != Weapon.NONE
-                        || this.hero2.getReadiedWeapon() != Weapon.NONE))
+                ((this.hero1.getDroppedWeapon() !== Weapon.NONE
+                    || this.hero1.getReadiedWeapon() !== Weapon.NONE)
+                    || (this.hero2.getDroppedWeapon() !== Weapon.NONE
+                        || this.hero2.getReadiedWeapon() !== Weapon.NONE))
                 ) {
                 this.round++;
                 this.hero1.newRound();
                 this.hero2.newRound();
 
-                if (require("./simulator").isVerbose()) {
+                if (require("./controller").isVerbose()) {
                     console.log("---> Round " + this.round + "\n");
                     console.log("Hero 1: " + this.hero1.getName() + ", ST: " + this.hero1.getST() + "(" + this.hero1.adjST() + ")\n");
                     console.log("Hero 2: " + this.hero2.getName() + ", ST: " + this.hero2.getST() + "(" + this.hero2.adjST() + ")\n");
@@ -63,14 +60,14 @@
                 }
                 /* roll to see who attacks first */
                 else if (this.hero1.adjustedDx() == this.hero2.adjustedDx()) {
-                    if (require("./simulator").isVerbose())
+                    if (require("./controller").isVerbose())
                         console.log("Adjusted dexterities are equal, rolling to decide attack order\n");
                     if (Math.random() < 0.5) {
                         firstAttacker = this.hero2;
                         secondAttacker = this.hero1;
                     }
                 }
-                if (require("./simulator").isVerbose())
+                if (require("./controller").isVerbose())
                     console.log(firstAttacker.getName() +
                         " (adjDx = " + firstAttacker.adjustedDx() +
                         ") attacks before " + secondAttacker.getName() +
@@ -93,11 +90,11 @@
             }
 
             if (winner != null) {
-                if (require("./simulator").isVerbose())
+                if (require("./controller").isVerbose())
                     console.log("-------> The winner of this bout is " + winner.getName() + "\n");
             }
             else {
-                if (require("./simulator").isVerbose())
+                if (require("./controller").isVerbose())
                     console.log("-------> This bout was a TIE!\n");
             }
             return winner;
@@ -110,21 +107,21 @@
      */
     function tryDefending(defender, attacker) {
         if (!defender.isKnockedDown()
-            && defender.getReadiedWeapon() != Weapon.NONE
+            && defender.getReadiedWeapon() !== Weapon.NONE
             && defender.sufferingDexPenalty()
             && defender.adjustedDx() < 8) {
             defender.setDefending();
-            if (require("./simulator").isVerbose())
+            if (require("./controller").isVerbose())
                 console.log(defender.getName() + " is defending this turn because adjDX < 8 and temporarily penalized.\n");
         }
         else if (Game.defendOnPoleCharge
             && !defender.isKnockedDown()
-            && defender.getReadiedWeapon() != Weapon.NONE
-            && attacker.getReadiedWeapon() != Weapon.NONE
+            && defender.getReadiedWeapon() !== Weapon.NONE
+            && attacker.getReadiedWeapon() !== Weapon.NONE
             && attacker.getReadiedWeapon().isPole()
             && attacker.isCharging()) {
             defender.setDefending();
-            if (require("./simulator").isVerbose())
+            if (require("./controller").isVerbose())
                 console.log(defender.getName() + " is defending this turn because attacker is charging with pole weapon.\n");
         }
     }
@@ -132,22 +129,22 @@
     function tryStandUp(hero) {
         if (hero.isKnockedDown()) {
             hero.standUp();
-            if (require("./simulator").isVerbose())
+            if (require("./controller").isVerbose())
                 console.log(hero.getName() + " is standing up this turn.\n");
         }
     }
 
     function tryPickUp(hero) {
-        if (hero.getDroppedWeapon() != Weapon.NONE) {
+        if (hero.getDroppedWeapon() !== Weapon.NONE) {
             hero.pickUpWeapon();
-            if (require("./simulator").isVerbose())
+            if (require("./controller").isVerbose())
                 console.log(hero.getName() + " is picking up his weapon this turn (facing rear in all six directions).\n");
         }
     }
 
     function resolveAttack(game, attacker, attackee, roll, numDice) {
         var facingBonus = attacker.isProne();
-        if (require("./simulator").isVerbose()) {
+        if (require("./controller").isVerbose()) {
             console.log(attacker.getName() + " rolling to hit. Rolled " + roll + " and adjDex is "
                 + (attackee.isProne() ? (attacker.adjustedDx() + facingBonus + " (" + attacker.adjustedDx() + " + " + facingBonus + ", target is picking up a weapon)")
                     : attacker.adjustedDx())
@@ -159,38 +156,39 @@
          * (below or equal to the attacker's adjDex OR and automatic hit)
          */
         if (!isAutomaticMiss(roll, numDice) && (roll <= attacker.adjustedDx() + facingBonus || isAutomaticHit(roll, numDice))) {
-            if (require("./simulator").isVerbose()) console.log("Hit! \n");
+            if (require("./controller").isVerbose()) console.log("Hit! \n");
+            //console.log(attacker.getReadiedWeapon());
             var hits = attacker.getReadiedWeapon().doDamage();
             if (attacker.isCharging() && attacker.getReadiedWeapon().isPole()) {
-                if (require("./simulator").isVerbose()) console.log("Pole weapon charge does double damage!\n");
+                if (require("./controller").isVerbose()) console.log("Pole weapon charge does double damage!\n");
                 game.criticalHits++;
                 hits *= 2;
             }
             if (isDoubleDamage(roll, numDice)) {
-                if (require("./simulator").isVerbose()) console.log("Double damage! (roll of " + roll + " on " + numDice + " dice.\n");
+                if (require("./controller").isVerbose()) console.log("Double damage! (roll of " + roll + " on " + numDice + " dice.\n");
                 game.criticalHits++;
                 hits *= 2;
             }
             else if (isTripleDamage(roll, numDice)) {
-                if (require("./simulator").isVerbose()) console.log("Triple damage! (roll of " + roll + " on " + numDice + " dice.\n");
+                if (require("./controller").isVerbose()) console.log("Triple damage! (roll of " + roll + " on " + numDice + " dice.\n");
                 game.criticalHits++;
                 hits *= 3;
             }
-            if (require("./simulator").isVerbose()) console.log("Total damage done by " + attacker.getReadiedWeapon().getName() + ": " + hits + " hits\n");
+            if (require("./controller").isVerbose()) console.log("Total damage done by " + attacker.getReadiedWeapon().getName() + ": " + hits + " hits\n");
             attackee.takeHits(hits);
             
         } else {
             /**
              * It's a miss
              */
-            if (require("./simulator").isVerbose()) console.log("Missed. \n");
+            if (require("./controller").isVerbose()) console.log("Missed. \n");
             if (isDroppedWeapon(roll, numDice)) {
-                if (require("./simulator").isVerbose()) console.log("Dropped weapon! \n");
+                if (require("./controller").isVerbose()) console.log("Dropped weapon! \n");
                 game.criticalMisses++;
                 attacker.dropWeapon();
             }
             else if (isBrokenWeapon(roll, numDice)) {
-                if (require("./simulator").isVerbose()) console.log("Broke weapon! \n");
+                if (require("./controller").isVerbose()) console.log("Broke weapon! \n");
                 game.criticalMisses++;
                 attacker.breakWeapon();
             }
@@ -203,27 +201,27 @@
         if (!attacker.isDefending()) {
             if (attacker.isConscious()) {
                 if (!attacker.isKnockedDown()) {
-                    if (attacker.getReadiedWeapon() != Weapon.NONE) {
+                    if (attacker.getReadiedWeapon() !== Weapon.NONE) {
                         var numDice = attackee.isDefending() ? 4 : 3;
                         resolveAttack(game, attacker, attackee,
                             Die.rollDice(numDice), numDice);
                     } else {
-                        if (require("./simulator").isVerbose())
+                        if (require("./controller").isVerbose())
                             console.log(attacker.getName()
                                 + " is not able to attack because he has has no readied weapon.\n");
                     }
                 } else {
-                    if (require("./simulator").isVerbose())
+                    if (require("./controller").isVerbose())
                         console.log(attacker.getName()
                             + " is not able to attack because he was knocked down.\n");
                 }
             } else {
-                if (require("./simulator").isVerbose())
+                if (require("./controller").isVerbose())
                     console.log(attacker.getName()
                         + " is not able to attack because he is unconscious.\n");
             }
         } else {
-            if (require("./simulator").isVerbose())
+            if (require("./controller").isVerbose())
                 console.log(attacker.getName() + " is defending.\n");
         }
 

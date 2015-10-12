@@ -1,6 +1,7 @@
 <html lang="en">
 	<head>
         <title>Melee simulator</title>
+        <script src="app/sorttable.js"></script>
         <script data-main="app" src="lib/require.js"></script>
     </head>
 	<body>
@@ -12,12 +13,15 @@
             </select></p>
 		
 	    <p>
-            <input id="startSimulation" type="button" value="Start" /></p>
+            <input id="startSimulation" type="button" value="Start" /> Progress: <progress id="progress" value="0" max="100"></progress></p>
             <p>Bouts per matchup: <INPUT id="boutsPerMatchup" TYPE="NUMBER" MIN="1" MAX="10000" STEP="1" VALUE="20" SIZE="6"></p>
             <p><input id="poleWeaponsChargeFirstRound" type="checkbox" />Pole weapons charge first round</p>
             <p><input id="defendVsPoleCharge" type="checkbox" />Defend vs pole charge</p>
             <p><input id="verboseOutput" type="checkbox" />Verbose output (caution!)</p>
             
-		
+        <h2>Total wins</h2>
+		<div id="heroWins"></div>
+        <h2>Matched up wins</h2>
+		<div id="matchupWins"></div>
 	</body>
 </html>

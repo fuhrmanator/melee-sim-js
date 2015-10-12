@@ -1,95 +1,126 @@
-﻿define(["./HeroesSingleton", "./Hero", "./Weapon", "./Game"], function (HeroesSingleton, Hero, Weapon, Game) {
+﻿importScripts('../lib/require.js');
+
+require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Game", "./controller"], function (HeroesSingleton, Hero, Armor, Shield, Weapon, Game, controller) {
     "use strict";
-    return {
-        isVerboseChecked : true,
-        isVerbose : function () {
-            return this.isVerboseChecked;
-        },
-        start: function () {
-            this.isVerboseChecked = document.getElementById("verboseOutput").checked;
 
-            function tryAllCombinations(heroSet, boutCount) {
-                var heroWins = {};  // map of hero and integer
-                var game = null;
-                var score = [2];
-                heroSet.forEach(function (hero1) {
-                    heroSet.forEach(function (hero2) {
-                        heroWins[hero1.getName() + hero2.getName()] = 0;
-                    }, this);
-                }, this);
-                //console.log(heroWins);
-                
-                for (var h1 = 0; h1 < heroSet.length; h1++) {
-                    var hero1 = heroSet[h1];
-                    var h2 = 0;
-                    var hero2 = heroSet[h2];
-                    while (h1 != h2 && h2 < heroSet.length) {
-                        hero2 = heroSet[h2];
-                        h2++;
-                    }
-                    for ( ; h2 < heroSet.length; h2++) {
-                        hero2 = heroSet[h2];
-                        var sumRounds = 0;
-                        score[0] = score[1] = 0;
-                        console.log('Bout: ' + hero1.getName() + ' vs. ' + hero2.getName());
-                        
-                        for (var bout = 0; bout < boutCount; bout++) {
-                            // clone heroes (resets them) prior to fighting
-                            var fightingHero1 = Object.create(hero1);
-                            var fightingHero2 = Object.create(hero2);
-                            console.log(fightingHero1);
-                            console.log(fightingHero2);
-                            game = new Game(fightingHero1, fightingHero2);
-                            var winningFighter = game.fightToTheDeath();
-                            
-                            if (winningFighter !== null) {
-                                var losingFighter = (winningFighter == fightingHero1 ? fightingHero2 : fightingHero1);
-                                score[(winningFighter == fightingHero1 ? 0 : 1)] ++;
-                                heroWins[winningFighter.getName() + losingFighter.getName()] ++;
-                            }
-                            sumRounds += game.round;
-                        }
-                        /**
-                         * Update the total stats for these heroes
-                         */
-                        
-                    }
-                    
-                }
-                
-            }
+    postMessage({ "cmd": "worker started" });
 
-            // http://stackoverflow.com/a/5867262/1168342
-            function getSelectedValues(selectElement) {
-                var result = [];
-                var options = selectElement && selectElement.options;
-                var opt;
-
-                for (var i = 0, iLen = options.length; i < iLen; i++) {
-                    opt = options[i];
-
-                    if (opt.selected) {
-                        result.push(opt.value || opt.text);
-                    }
-                }
-                return result;
-            }
+    onmessage = function (event) {
+        /**
+         * Only one type of message to start this thread
+         */
+        var data = event.data;
+        var heroSet = [];  // list of heroes to fight
             
-            // Start starts here ;-)
-            console.log('Starting simulation');
-            var selectElement = document.getElementById("heroesSelected");
-            var selectedHeroes = getSelectedValues(selectElement);
-            var heroSet = [];  // list of heroes to fight
-            
-            selectedHeroes.forEach(function (heroName) {
-                var hero = HeroesSingleton.getHeroList()[heroName];
-                heroSet.push(hero);
-            }, this);
-            //console.log(heroSet);
-            
-            var boutCount = document.getElementById("boutsPerMatchup").value;
+        HeroesSingleton.createHeroesMap();
+        var completeHeroMap = HeroesSingleton.getHeroMap();
+        data.selectedHeroes.forEach(function (heroName) {
+            var hero = completeHeroMap[heroName];
+            heroSet.push(hero);
+        }, this);
 
-            tryAllCombinations(heroSet, boutCount);
-        }
+        tryAllCombinations(heroSet, data.boutCount);
     };
+
+    //self.console.log("onmessage set... waiting for a message");
+
+    function tryAllCombinations(heroSet, boutCount) {
+        var isVerbose = controller.isVerboseChecked;
+        var matchupWins = {};  // map of hero and integer
+        var heroWins = {};
+        var game = null;
+        var score = [2];
+        heroSet.forEach(function (hero1) {
+            heroWins[hero1.getName()] = 0;
+            heroSet.forEach(function (hero2) {
+                matchupWins[hero1.getName() + "/" + hero2.getName()] = 0;
+            }, this);
+        }, this);
+        //console.log(heroWins);
+                
+        for (var h1 = 0; h1 < heroSet.length; h1++) {
+            /**
+             * update progress bar on page (assumes max is 100)
+             */
+            var progress = Math.ceil(((h1 + 1) / heroSet.length) * 100);
+            self.postMessage({ "cmd": "progressUpdate", "progress": progress });
+
+            var hero1 = heroSet[h1];
+            var h2 = 0;
+            var hero2 = heroSet[h2];
+            while (h1 != h2 && h2 < heroSet.length) {
+                hero2 = heroSet[h2];
+                h2++;
+            }
+            for (; h2 < heroSet.length; h2++) {
+                hero2 = heroSet[h2];
+                var sumRounds = 0;
+                score[0] = 0;
+                score[1] = 0;
+                if (isVerbose) console.log('Matchup: ' + hero1.getName() + ' vs. ' + hero2.getName());
+
+                for (var bout = 0; bout < boutCount; bout++) {
+                    // clone heroes (resets them) prior to fighting
+                    var fightingHero1 = Object.create(hero1);
+                    var fightingHero2 = Object.create(hero2);
+                    // console.log(fightingHero1);
+                    // console.log(fightingHero2);
+                    game = new Game(fightingHero1, fightingHero2);
+                    var winningFighter = game.fightToTheDeath();
+
+                    if (winningFighter !== null) {
+                        var losingFighter = (winningFighter == fightingHero1 ? fightingHero2 : fightingHero1);
+                        score[(winningFighter == fightingHero1 ? 0 : 1)]++;
+                        matchupWins[winningFighter.getName() + "/" + losingFighter.getName()]++;
+                    }
+                    sumRounds += game.round;
+                }
+                /**
+                 * Update the total stats for these heroes
+                 */
+                heroWins[hero1.getName()] += score[0];
+                heroWins[hero2.getName()] += score[1];
+            }
+
+        }
+        /**
+         * Put stats back on page
+         */
+        // var heroWinsTable = createTableFromProperties(heroWins);
+        // document.getElementById("heroWins").appendChild(heroWinsTable);
+        // var matchupWinsTable = createTableFromProperties(matchupWins);
+        // document.getElementById("matchupWins").appendChild(matchupWinsTable);
+        self.postMessage({ "cmd": "finished", "heroWins": heroWins, "matchupWins": matchupWins });
+    }
+
+
+    function updateProgress() {
+        var progressBar = document.getElementById("progress");
+        if (progressBar.value < progressBar.max) {
+            setTimeout(updateProgress, 80);
+        } else {
+            return;
+        }
+    }
+
+            
+    // // Start starts here ;-)
+    // // 'this' is the button that was clicked (onclick)
+    // this.disabled = true;
+    // console.log('Starting simulation');
+    // var selectElement = document.getElementById("heroesSelected");
+    // var selectedHeroes = getSelectedValues(selectElement);
+    // var heroSet = [];  // list of heroes to fight
+            
+    // selectedHeroes.forEach(function (heroName) {
+    //     var hero = HeroesSingleton.getHeroList()[heroName];
+    //     heroSet.push(hero);
+    // }, this);
+    // //console.log(heroSet);
+            
+    // var boutCount = document.getElementById("boutsPerMatchup").value;
+
+    // updateProgress();
+    // tryAllCombinations(heroSet, boutCount);
+    // this.disabled = false;
 });

@@ -1,4 +1,4 @@
-﻿define(["./simulator", "require"], function (simulator, require) {
+﻿define(["./controller", "require"], function (controller, require) {
     "use strict";
     // Pattern from http://stackoverflow.com/a/10280735/1168342
     // Start with the constructor
@@ -10,14 +10,14 @@
 
     Die.roll= function () {
         var roll = Math.floor(Math.random() * 6 + 1);
-		if (require("./simulator").isVerbose())
+		if (require("./controller").isVerbose())
 			console.log(
 				"Die roll: " + roll + "\n");
 		return roll;
     }
 
     Die.rollDice= function (numDice) {
-		if (require("./simulator").isVerbose())
+		if (require("./controller").isVerbose())
 			console.log(
 				"Rolling " + numDice + " dice...\n");
         var result = 0;

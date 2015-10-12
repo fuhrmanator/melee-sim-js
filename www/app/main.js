@@ -4,7 +4,7 @@
     // with a relative require call,
     // like:    
 
-    var simulator = require('./simulator');
+    var controller = require('./controller');
 
     // Load library/vendor modules using
     // full IDs, like:
@@ -14,10 +14,22 @@
 
 
     var HeroesSingleton = require('./HeroesSingleton');
-    HeroesSingleton.createHeroesList();
+    HeroesSingleton.createHeroesMap();
+    var heroMap = HeroesSingleton.getHeroMap();
+    // add to GUI
+    for (var key in heroMap) {
+        var hero = heroMap[key];
+        var heroName = hero.getName();  // key
+        var select = document.getElementById("heroesSelected");
+        var opt = document.createElement('option');
+        opt.value = heroName;
+        opt.innerHTML = heroName;
+        select.appendChild(opt);
+    }
+    
     //HeroesSingleton.displayHeroesList();
 
     var selectElement = document.getElementById("heroesSelected");
     selectElement.size = HeroesSingleton.getListHeight();
-    document.getElementById('startSimulation').onclick = simulator.start;
+    document.getElementById('startSimulation').onclick = controller.start;
 });

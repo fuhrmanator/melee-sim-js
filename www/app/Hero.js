@@ -1,4 +1,4 @@
-﻿define(["./Weapon", "./simulator", "require"], function (Weapon, simulator, require) {
+﻿define(["./Weapon", "./controller", "require"], function (Weapon, controller, require) {
     "use strict";
     // Start with the constructor
     function Hero(name, st, dx, weapon, armor, shield) {
@@ -93,7 +93,7 @@
         var damageDone = hits - armorPoints;
         if (damageDone < 0) damageDone = 0;
 
-        if (require("./simulator").isVerbose()) {
+        if (require("./controller").isVerbose()) {
             console.log(this.name + " taking " + hits + " hits.\n");
             console.log(this.armor.getName() + " stops " + this.armor.hitsStopped() + "\n");
             console.log(this.shield.getName() + " stops " + this.shield.hitsStopped() + "\n");
@@ -112,15 +112,15 @@
         this.damageTakenThisRound += damageDone;
         this.injuryDexPenalty = this.sufferingDexPenalty();
 
-        if (require("./simulator").isVerbose() && this.injuryDexPenalty) console.log(this.name + " has an adjDx penalty of -2 for remainder of this round and the NEXT round.\n");
-        if (require("./simulator").isVerbose()) console.log(this.name + " has now taken " + this.damageTaken + " points of damage, ST = " + this.st + "\n");
+        if (require("./controller").isVerbose() && this.injuryDexPenalty) console.log(this.name + " has an adjDx penalty of -2 for remainder of this round and the NEXT round.\n");
+        if (require("./controller").isVerbose()) console.log(this.name + " has now taken " + this.damageTaken + " points of damage, ST = " + this.st + "\n");
 
         if (this.damageTakenThisRound >= 8)
         {
             this.knockedDown = true;
-            if (require("./simulator").isVerbose()) console.log(this.name + " has been knocked down by damage.\n");   
+            if (require("./controller").isVerbose()) console.log(this.name + " has been knocked down by damage.\n");   
         }
-        if (require("./simulator").isVerbose() && this.isStrengthLowPenalty()) console.log(this.name + " has an additional DX adjustment of -3 due to ST <= 3.\n");
+        if (require("./controller").isVerbose() && this.isStrengthLowPenalty()) console.log(this.name + " has an additional DX adjustment of -3 due to ST <= 3.\n");
 
     }
 

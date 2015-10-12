@@ -1,4 +1,4 @@
-﻿define(["./Die","./simulator","require"],function (Die, simulator, require) {
+﻿define(["./Die","./controller","require"],function (Die, controller, require) {
     "use strict";
     // Pattern from http://stackoverflow.com/a/10280735/1168342
     // Start with the constructor
@@ -33,7 +33,7 @@
     }
     
     Weapon.prototype.doDamage = function () {
-		if (require("./simulator").isVerbose())
+		if (require("./controller").isVerbose())
 			console.log(
 					"Rolling for weapon doing "
 							+ this.dice
