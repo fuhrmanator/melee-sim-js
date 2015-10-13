@@ -1,4 +1,4 @@
-﻿define(["./Weapon", "./controller", "require"], function (Weapon, controller, require) {
+﻿define(["./Weapon", "./Logger"], function (Weapon, Logger) {
     "use strict";
     // Start with the constructor
     function Hero(name, st, dx, weapon, armor, shield) {
@@ -31,7 +31,7 @@
     };
 
     Hero.prototype.adjST = function () {
-		return Math.max(this.st - this.damageTaken, 0);
+        return Math.max(this.st - this.damageTaken, 0);
     };
 
     Hero.prototype.getDX = function () {
@@ -93,12 +93,11 @@
         var damageDone = hits - armorPoints;
         if (damageDone < 0) damageDone = 0;
 
-        if (require("./controller").isVerbose()) {
-            console.log(this.name + " taking " + hits + " hits.\n");
-            console.log(this.armor.getName() + " stops " + this.armor.hitsStopped() + "\n");
-            console.log(this.shield.getName() + " stops " + this.shield.hitsStopped() + "\n");
-            console.log(this.name + " taking " + damageDone + " damage.\n");
-        }
+
+        Logger.log(this.name + " taking " + hits + " hits.\n");
+        Logger.log(this.armor.getName() + " stops " + this.armor.hitsStopped() + "\n");
+        Logger.log(this.shield.getName() + " stops " + this.shield.hitsStopped() + "\n");
+        Logger.log(this.name + " taking " + damageDone + " damage.\n");
 
         this.takeDamage(damageDone);
         return damageDone;
@@ -112,15 +111,14 @@
         this.damageTakenThisRound += damageDone;
         this.injuryDexPenalty = this.sufferingDexPenalty();
 
-        if (require("./controller").isVerbose() && this.injuryDexPenalty) console.log(this.name + " has an adjDx penalty of -2 for remainder of this round and the NEXT round.\n");
-        if (require("./controller").isVerbose()) console.log(this.name + " has now taken " + this.damageTaken + " points of damage, ST = " + this.st + "\n");
+        if (this.injuryDexPenalty) Logger.log(this.name + " has an adjDx penalty of -2 for remainder of this round and the NEXT round.\n");
+        Logger.log(this.name + " has now taken " + this.damageTaken + " points of damage, ST = " + this.st + "\n");
 
-        if (this.damageTakenThisRound >= 8)
-        {
+        if (this.damageTakenThisRound >= 8) {
             this.knockedDown = true;
-            if (require("./controller").isVerbose()) console.log(this.name + " has been knocked down by damage.\n");   
+            Logger.log(this.name + " has been knocked down by damage.\n");
         }
-        if (require("./controller").isVerbose() && this.isStrengthLowPenalty()) console.log(this.name + " has an additional DX adjustment of -3 due to ST <= 3.\n");
+        if (this.isStrengthLowPenalty()) Logger.log(this.name + " has an additional DX adjustment of -3 due to ST <= 3.\n");
 
     }
 

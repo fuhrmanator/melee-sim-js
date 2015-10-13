@@ -1,4 +1,4 @@
-﻿define(["./controller", "require"], function (controller, require) {
+﻿define(["./Logger"], function (Logger) {
     "use strict";
     // Pattern from http://stackoverflow.com/a/10280735/1168342
     // Start with the constructor
@@ -8,18 +8,16 @@
         }
     }
 
-    Die.roll= function () {
+    Die.roll = function () {
         var roll = Math.floor(Math.random() * 6 + 1);
-		if (require("./controller").isVerbose())
-			console.log(
-				"Die roll: " + roll + "\n");
-		return roll;
+        Logger.log(
+            "Die roll: " + roll + "\n");
+        return roll;
     }
 
-    Die.rollDice= function (numDice) {
-		if (require("./controller").isVerbose())
-			console.log(
-				"Rolling " + numDice + " dice...\n");
+    Die.rollDice = function (numDice) {
+        Logger.log(
+            "Rolling " + numDice + " dice...\n");
         var result = 0;
         for (var i = 0; i < numDice; i++) {
             result += Die.roll();
@@ -27,11 +25,11 @@
         return result;
     }
 
-    Die.rollThreeDice= function (numDice) {
+    Die.rollThreeDice = function (numDice) {
         return Die.rollDice(3);
     }
 
-    Die.rollFourDice= function (numDice) {
+    Die.rollFourDice = function (numDice) {
         return Die.rollDice(4);
     }
 

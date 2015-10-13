@@ -1,8 +1,11 @@
 ﻿importScripts('../lib/require.js');
 
-require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Game", "./controller"], function (HeroesSingleton, Hero, Armor, Shield, Weapon, Game, controller) {
+require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Game", "./controller", "./Logger"], function (HeroesSingleton, Hero, Armor, Shield, Weapon, Game, controller, Logger) {
     "use strict";
 
+    var poleWeaponsChargeFirstRound = null;
+    var defendVsPoleCharge = null;
+    
     postMessage({ "cmd": "worker started" });
 
     onmessage = function (event) {
@@ -19,13 +22,20 @@ require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Ga
             heroSet.push(hero);
         }, this);
 
+        /**
+         * Configure simulator options
+         */
+        Logger.isMute = !data.isVerbose;
+        console.log(Logger.isMute);
+        poleWeaponsChargeFirstRound = data.isPoleWeaponsChargeFirstRound;
+        defendVsPoleCharge = data.isDefendVsPoleCharge;
+
         tryAllCombinations(heroSet, data.boutCount);
     };
 
     //self.console.log("onmessage set... waiting for a message");
 
     function tryAllCombinations(heroSet, boutCount) {
-        var isVerbose = controller.isVerboseChecked;
         var matchupWins = {};  // map of hero and integer
         var heroWins = {};
         var game = null;
@@ -57,7 +67,7 @@ require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Ga
                 var sumRounds = 0;
                 score[0] = 0;
                 score[1] = 0;
-                if (isVerbose) console.log('Matchup: ' + hero1.getName() + ' vs. ' + hero2.getName());
+                Logger.log('Matchup: ' + hero1.getName() + ' vs. ' + hero2.getName());
 
                 for (var bout = 0; bout < boutCount; bout++) {
                     // clone heroes (resets them) prior to fighting
@@ -65,7 +75,7 @@ require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Ga
                     var fightingHero2 = Object.create(hero2);
                     // console.log(fightingHero1);
                     // console.log(fightingHero2);
-                    game = new Game(fightingHero1, fightingHero2);
+                    game = new Game(fightingHero1, fightingHero2, poleWeaponsChargeFirstRound, defendVsPoleCharge);
                     var winningFighter = game.fightToTheDeath();
 
                     if (winningFighter !== null) {

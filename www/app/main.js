@@ -1,4 +1,7 @@
-﻿define(function (require) {
+﻿// TODO take all game rules out of Hero, Armor, Weapon, etc. and move to Game class - this will decouple dependencies on Logger
+// TODO make JSON string for Heroes
+
+define(function (require) {
     "use strict";
     // Load any app-specific modules
     // with a relative require call,

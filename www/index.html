@@ -1,5 +1,7 @@
 <html lang="en">
 	<head>
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=MedievalSharp" />
+        <link rel="stylesheet" type="text/css" href="css/melee.css" />
         <title>Melee simulator</title>
         <script src="app/sorttable.js"></script>
         <script data-main="app" src="lib/require.js"></script>
@@ -20,8 +22,10 @@
             <p><input id="verboseOutput" type="checkbox" />Verbose output (caution!)</p>
             
         <h2>Total wins</h2>
-		<div id="heroWins"></div>
+        <p>This is a sortable table - click column headings to sort.</p> 
+		<div id="heroWins"><p>(No data generated yet. Select heroes and click Start.)</p></div>
         <h2>Matched up wins</h2>
-		<div id="matchupWins"></div>
+        <p>This is a sortable table - click column headings to sort.</p> 
+		<div id="matchupWins"><p>(No data generated yet. Select heroes and click Start.)</p></div>
 	</body>
 </html>

@@ -1,4 +1,4 @@
-﻿define(["./Die","./controller","require"],function (Die, controller, require) {
+﻿define(["./Die","./Logger"],function (Die, Logger) {
     "use strict";
     // Pattern from http://stackoverflow.com/a/10280735/1168342
     // Start with the constructor
@@ -33,8 +33,7 @@
     }
     
     Weapon.prototype.doDamage = function () {
-		if (require("./controller").isVerbose())
-			console.log(
+			Logger.log(
 					"Rolling for weapon doing "
 							+ this.dice
 							+ "d"

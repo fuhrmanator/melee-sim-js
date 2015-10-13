@@ -77,7 +77,7 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
             isPoleWeaponsChargeFirstRoundChecked = document.getElementById("poleWeaponsChargeFirstRound").checked;
             isDefendVsPoleChargeChecked = document.getElementById("defendVsPoleCharge").checked;
             isVerboseChecked = document.getElementById("verboseOutput").checked;
-            // Start starts here ;-)
+            
             // 'this' is the button that was clicked (onclick)
             var startButton = this;
             startButton.disabled = true;
@@ -110,7 +110,7 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
                 switch (data.cmd) {
                     case 'worker started':
                         // give worker the info
-                        worker.postMessage({ 'selectedHeroes': selectedHeroes, 'boutCount': boutCount });
+                        worker.postMessage({ 'selectedHeroes': selectedHeroes, 'boutCount': boutCount, 'isPoleWeaponsChargeFirstRound': isPoleWeaponsChargeFirstRoundChecked, 'isDefendVsPoleCharge': isDefendVsPoleChargeChecked, 'isVerbose':isVerboseChecked });
                         break;
 
                     case 'progressUpdate':
@@ -142,15 +142,6 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
             });
 
             // worker takes over leaving the GUI thread free to update
-        },
-        isPoleWeaponsChargeFirstRound: function () {
-            return isPoleWeaponsChargeFirstRoundChecked;
-        },
-        isDefendVsPoleCharge: function () {
-            return isDefendVsPoleChargeChecked;
-        },
-        isVerbose: function () {
-            return isVerboseChecked;
         }
 
     };

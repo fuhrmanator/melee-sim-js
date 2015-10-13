@@ -1,8 +1,8 @@
-﻿define(["./Hero", "./Weapon", "./Armor", "./Shield", "./Die", "./controller", "require"], function (Hero, Weapon, Armor, Shield, Die, controller, require) {
+﻿define(["./Hero", "./Weapon", "./Armor", "./Shield", "./Die", "./Logger"], function (Hero, Weapon, Armor, Shield, Die, Logger) {
     "use strict";
     // Pattern from http://stackoverflow.com/a/10280735/1168342
     // Start with the constructor
-    function Game(hero1, hero2) {
+    function Game(hero1, hero2, poleCharge, defendOnPoleCharge) {
         if (!(this instanceof Game)) {
             throw new TypeError("Game constructor cannot be called as a function.");
         }
@@ -13,8 +13,8 @@
         this.winHero2 = false;
         this.criticalMisses = 0;
         this.criticalHits = 0;
-        this.poleCharge = false;
-        this.defendOnPoleCharge = false;
+        this.poleCharge = poleCharge;
+        this.defendOnPoleCharge = defendOnPoleCharge;
     };
 
     // Now add public methods
@@ -32,11 +32,10 @@
                 this.hero1.newRound();
                 this.hero2.newRound();
 
-                if (require("./controller").isVerbose()) {
-                    console.log("---> Round " + this.round + "\n");
-                    console.log("Hero 1: " + this.hero1.getName() + ", ST: " + this.hero1.getST() + "(" + this.hero1.adjST() + ")\n");
-                    console.log("Hero 2: " + this.hero2.getName() + ", ST: " + this.hero2.getST() + "(" + this.hero2.adjST() + ")\n");
-                }
+
+                Logger.log("---> Round " + this.round + "\n");
+                Logger.log("Hero 1: " + this.hero1.getName() + ", ST: " + this.hero1.getST() + "(" + this.hero1.adjST() + ")\n");
+                Logger.log("Hero 2: " + this.hero2.getName() + ", ST: " + this.hero2.getST() + "(" + this.hero2.adjST() + ")\n");
 
                 /* Charge attack */
                 if (Game.poleCharge && this.round == 1) {
@@ -60,18 +59,18 @@
                 }
                 /* roll to see who attacks first */
                 else if (this.hero1.adjustedDx() == this.hero2.adjustedDx()) {
-                    if (require("./controller").isVerbose())
-                        console.log("Adjusted dexterities are equal, rolling to decide attack order\n");
+
+                    Logger.log("Adjusted dexterities are equal, rolling to decide attack order\n");
                     if (Math.random() < 0.5) {
                         firstAttacker = this.hero2;
                         secondAttacker = this.hero1;
                     }
                 }
-                if (require("./controller").isVerbose())
-                    console.log(firstAttacker.getName() +
-                        " (adjDx = " + firstAttacker.adjustedDx() +
-                        ") attacks before " + secondAttacker.getName() +
-                        " (adjDx = " + secondAttacker.adjustedDx() + ")\n");
+
+                Logger.log(firstAttacker.getName() +
+                    " (adjDx = " + firstAttacker.adjustedDx() +
+                    ") attacks before " + secondAttacker.getName() +
+                    " (adjDx = " + secondAttacker.adjustedDx() + ")\n");
 
                 tryStandUp(firstAttacker);
                 tryStandUp(secondAttacker);
@@ -90,12 +89,12 @@
             }
 
             if (winner != null) {
-                if (require("./controller").isVerbose())
-                    console.log("-------> The winner of this bout is " + winner.getName() + "\n");
+
+                Logger.log("-------> The winner of this bout is " + winner.getName() + "\n");
             }
             else {
-                if (require("./controller").isVerbose())
-                    console.log("-------> This bout was a TIE!\n");
+
+                Logger.log("-------> This bout was a TIE!\n");
             }
             return winner;
         },
@@ -111,8 +110,8 @@
             && defender.sufferingDexPenalty()
             && defender.adjustedDx() < 8) {
             defender.setDefending();
-            if (require("./controller").isVerbose())
-                console.log(defender.getName() + " is defending this turn because adjDX < 8 and temporarily penalized.\n");
+
+            Logger.log(defender.getName() + " is defending this turn because adjDX < 8 and temporarily penalized.\n");
         }
         else if (Game.defendOnPoleCharge
             && !defender.isKnockedDown()
@@ -121,74 +120,73 @@
             && attacker.getReadiedWeapon().isPole()
             && attacker.isCharging()) {
             defender.setDefending();
-            if (require("./controller").isVerbose())
-                console.log(defender.getName() + " is defending this turn because attacker is charging with pole weapon.\n");
+
+            Logger.log(defender.getName() + " is defending this turn because attacker is charging with pole weapon.\n");
         }
     }
 
     function tryStandUp(hero) {
         if (hero.isKnockedDown()) {
             hero.standUp();
-            if (require("./controller").isVerbose())
-                console.log(hero.getName() + " is standing up this turn.\n");
+
+            Logger.log(hero.getName() + " is standing up this turn.\n");
         }
     }
 
     function tryPickUp(hero) {
         if (hero.getDroppedWeapon() !== Weapon.NONE) {
             hero.pickUpWeapon();
-            if (require("./controller").isVerbose())
-                console.log(hero.getName() + " is picking up his weapon this turn (facing rear in all six directions).\n");
+            Logger.log(hero.getName() + " is picking up his weapon this turn (facing rear in all six directions).\n");
         }
     }
 
     function resolveAttack(game, attacker, attackee, roll, numDice) {
         var facingBonus = attacker.isProne();
-        if (require("./controller").isVerbose()) {
-            console.log(attacker.getName() + " rolling to hit. Rolled " + roll + " and adjDex is "
-                + (attackee.isProne() ? (attacker.adjustedDx() + facingBonus + " (" + attacker.adjustedDx() + " + " + facingBonus + ", target is picking up a weapon)")
-                    : attacker.adjustedDx())
-                + "\n");
-        }
+
+        Logger.log(attacker.getName() + " rolling to hit. Rolled " + roll + " and adjDex is "
+            + (attackee.isProne() ? (attacker.adjustedDx() + facingBonus + " (" + attacker.adjustedDx() + " + " + facingBonus + ", target is picking up a weapon)")
+                : attacker.adjustedDx())
+            + "\n");
+
         /**
          * A hit is a roll that is 
          * NOT an automatic miss AND
          * (below or equal to the attacker's adjDex OR and automatic hit)
          */
         if (!isAutomaticMiss(roll, numDice) && (roll <= attacker.adjustedDx() + facingBonus || isAutomaticHit(roll, numDice))) {
-            if (require("./controller").isVerbose()) console.log("Hit! \n");
-            //console.log(attacker.getReadiedWeapon());
+            Logger.log("Hit! \n");
+
             var hits = attacker.getReadiedWeapon().doDamage();
             if (attacker.isCharging() && attacker.getReadiedWeapon().isPole()) {
-                if (require("./controller").isVerbose()) console.log("Pole weapon charge does double damage!\n");
+                Logger.log("Pole weapon charge does double damage!\n");
                 game.criticalHits++;
                 hits *= 2;
             }
             if (isDoubleDamage(roll, numDice)) {
-                if (require("./controller").isVerbose()) console.log("Double damage! (roll of " + roll + " on " + numDice + " dice.\n");
+                Logger.log("Double damage! (roll of " + roll + " on " + numDice + " dice.\n");
                 game.criticalHits++;
                 hits *= 2;
             }
             else if (isTripleDamage(roll, numDice)) {
-                if (require("./controller").isVerbose()) console.log("Triple damage! (roll of " + roll + " on " + numDice + " dice.\n");
+                Logger.log("Triple damage! (roll of " + roll + " on " + numDice + " dice.\n");
                 game.criticalHits++;
                 hits *= 3;
             }
-            if (require("./controller").isVerbose()) console.log("Total damage done by " + attacker.getReadiedWeapon().getName() + ": " + hits + " hits\n");
+            Logger.log("Total damage done by " + attacker.getReadiedWeapon().getName() + ": " + hits + " hits\n");
             attackee.takeHits(hits);
-            
+
         } else {
             /**
              * It's a miss
              */
-            if (require("./controller").isVerbose()) console.log("Missed. \n");
+            Logger.log("Missed. \n");
             if (isDroppedWeapon(roll, numDice)) {
-                if (require("./controller").isVerbose()) console.log("Dropped weapon! \n");
+                Logger.log("Dropped weapon! \n");
                 game.criticalMisses++;
                 attacker.dropWeapon();
             }
             else if (isBrokenWeapon(roll, numDice)) {
-                if (require("./controller").isVerbose()) console.log("Broke weapon! \n");
+                Logger.log("Broke weapon! \n");
                 game.criticalMisses++;
                 attacker.breakWeapon();
             }
@@ -206,23 +204,23 @@
                         resolveAttack(game, attacker, attackee,
                             Die.rollDice(numDice), numDice);
                     } else {
-                        if (require("./controller").isVerbose())
-                            console.log(attacker.getName()
-                                + " is not able to attack because he has has no readied weapon.\n");
+
+                        Logger.log(attacker.getName()
+                            + " is not able to attack because he has has no readied weapon.\n");
                     }
                 } else {
-                    if (require("./controller").isVerbose())
-                        console.log(attacker.getName()
-                            + " is not able to attack because he was knocked down.\n");
+
+                    Logger.log(attacker.getName()
+                        + " is not able to attack because he was knocked down.\n");
                 }
             } else {
-                if (require("./controller").isVerbose())
-                    console.log(attacker.getName()
-                        + " is not able to attack because he is unconscious.\n");
+
+                Logger.log(attacker.getName()
+                    + " is not able to attack because he is unconscious.\n");
             }
         } else {
-            if (require("./controller").isVerbose())
-                console.log(attacker.getName() + " is defending.\n");
+
+            Logger.log(attacker.getName() + " is defending.\n");
         }
 
     };
