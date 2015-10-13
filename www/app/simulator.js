@@ -15,8 +15,8 @@ require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Ga
         var data = event.data;
         var heroSet = [];  // list of heroes to fight
             
-        HeroesSingleton.createHeroesMap();
-        var completeHeroMap = HeroesSingleton.getHeroMap();
+        Game.createHeroesMap();
+        var completeHeroMap = Game.getHeroMap();
         data.selectedHeroes.forEach(function (heroName) {
             var hero = completeHeroMap[heroName];
             heroSet.push(hero);
@@ -25,8 +25,7 @@ require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Ga
         /**
          * Configure simulator options
          */
-        Logger.isMute = !data.isVerbose;
-        console.log(Logger.isMute);
+        Logger.setMute(!data.isVerbose);
         poleWeaponsChargeFirstRound = data.isPoleWeaponsChargeFirstRound;
         defendVsPoleCharge = data.isDefendVsPoleCharge;
 
@@ -40,29 +39,24 @@ require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Ga
         var heroWins = {};
         var game = null;
         var score = [2];
+        var progress = 0;
+        // how many bouts total is N * N-1 * boutCount
+        var totalIterations = heroSet.length * (heroSet.length-1) * boutCount / 2;
+        var iterationCount = 0;
         heroSet.forEach(function (hero1) {
             heroWins[hero1.getName()] = 0;
             heroSet.forEach(function (hero2) {
-                matchupWins[hero1.getName() + "/" + hero2.getName()] = 0;
+                if (hero1 != hero2) matchupWins[hero1.getName() + "/" + hero2.getName()] = 0;
             }, this);
         }, this);
         //console.log(heroWins);
                 
         for (var h1 = 0; h1 < heroSet.length; h1++) {
-            /**
-             * update progress bar on page (assumes max is 100)
-             */
-            var progress = Math.ceil(((h1 + 1) / heroSet.length) * 100);
-            self.postMessage({ "cmd": "progressUpdate", "progress": progress });
-
             var hero1 = heroSet[h1];
             var h2 = 0;
             var hero2 = heroSet[h2];
-            while (h1 != h2 && h2 < heroSet.length) {
-                hero2 = heroSet[h2];
-                h2++;
-            }
-            for (; h2 < heroSet.length; h2++) {
+
+            for (h2 = h1 + 1; h2 < heroSet.length; h2++) {
                 hero2 = heroSet[h2];
                 var sumRounds = 0;
                 score[0] = 0;
@@ -70,6 +64,12 @@ require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Ga
                 Logger.log('Matchup: ' + hero1.getName() + ' vs. ' + hero2.getName());
 
                 for (var bout = 0; bout < boutCount; bout++) {
+                    /**
+                    * update progress bar on page (assumes max is 100)
+                    */
+                    progress = Math.ceil((++iterationCount/ totalIterations) * 100);
+                    self.postMessage({ "cmd": "progressUpdate", "progress": progress });
+
                     // clone heroes (resets them) prior to fighting
                     var fightingHero1 = Object.create(hero1);
                     var fightingHero2 = Object.create(hero2);

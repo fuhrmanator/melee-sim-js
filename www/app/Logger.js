@@ -8,12 +8,16 @@ define(function () {
         }
     }
 
-    var isMute = true; 
+    var isMute = false;
     console.log(">>> Logger initing.");
 
     Logger.log = function (message) {
-        console.log(isMute);
         if (!isMute) console.log(message);
+    }
+
+    Logger.setMute = function (changeIsMute) {
+        isMute = changeIsMute;
+        console.log("Logger.isMute set to " + isMute);
     }
 
     return Logger;

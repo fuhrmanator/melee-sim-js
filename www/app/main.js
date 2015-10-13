@@ -17,17 +17,16 @@ define(function (require) {
 
 
     var HeroesSingleton = require('./HeroesSingleton');
-    HeroesSingleton.createHeroesMap();
-    var heroMap = HeroesSingleton.getHeroMap();
-    // add to GUI
-    for (var key in heroMap) {
-        var hero = heroMap[key];
-        var heroName = hero.getName();  // key
-        var select = document.getElementById("heroesSelected");
-        var opt = document.createElement('option');
-        opt.value = heroName;
-        opt.innerHTML = heroName;
-        select.appendChild(opt);
+
+    var select = document.getElementById("heroesSelected");
+    var opt = null;
+    var heroesListJSON = HeroesSingleton.getHeroesListJSON();
+    for (var i = 0; i < heroesListJSON.length; i++) {
+        var heroJSON = heroesListJSON[i];
+        opt = document.createElement('option');
+        opt.value = heroJSON.name;
+        opt.innerHTML = heroJSON.name;
+        select.appendChild(opt);        
     }
     
     //HeroesSingleton.displayHeroesList();
