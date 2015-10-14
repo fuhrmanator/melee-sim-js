@@ -81,6 +81,8 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
             // 'this' is the button that was clicked (onclick)
             var startButton = this;
             startButton.disabled = true;
+            var progressBar = document.getElementById("progress");
+            progressBar.value = 0;
             
             /**
              * Clear results from previous run 
@@ -114,7 +116,6 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
                         break;
 
                     case 'progressUpdate':
-                        var progressBar = document.getElementById("progress");
                         progressBar.value = data.progress;
                         break;
 

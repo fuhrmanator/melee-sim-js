@@ -139,6 +139,7 @@
     };
 
     Hero.prototype.setCharging = function (isCharging) {
+//        Logger.log("Hero: setCharge to " + isCharging);
         this.charging = isCharging;
     };
 

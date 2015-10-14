@@ -12,7 +12,7 @@
         this.modifier = modifier;
         this.isTwoHanded = isTwoHanded;
         this.isThrown = isThrown;
-        this.isPole = isPole;
+        this._isPole = isPole;
     }
 
     // Now add methods
@@ -29,7 +29,7 @@
     }
 
     Weapon.prototype.isPole = function () {
-        return this.isPole;
+        return this._isPole;
     }
     
     Weapon.prototype.doDamage = function () {

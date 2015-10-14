@@ -9,7 +9,6 @@ define(function () {
     }
 
     var isMute = false;
-    console.log(">>> Logger initing.");
 
     Logger.log = function (message) {
         if (!isMute) console.log(message);
@@ -17,7 +16,6 @@ define(function () {
 
     Logger.setMute = function (changeIsMute) {
         isMute = changeIsMute;
-        console.log("Logger.isMute set to " + isMute);
     }
 
     return Logger;

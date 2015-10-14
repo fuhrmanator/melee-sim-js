@@ -19,6 +19,7 @@
         this.poleCharge = poleCharge;
         this.defendOnPoleCharge = defendOnPoleCharge;
         this.heroMap = {};
+        Logger.log("New Game with pole charge set to " + this.poleCharge + " and defend on pole charge set to " + this.defendOnPoleCharge);
     };
 
     // Now add public methods
@@ -42,11 +43,16 @@
                 Logger.log("Hero 2: " + this.hero2.getName() + ", ST: " + this.hero2.getST() + "(" + this.hero2.adjST() + ")");
 
                 /* Charge attack */
-                if (Game.poleCharge && this.round == 1) {
-                    this.hero1.setCharging(true);
-                    this.hero2.setCharging(true);
-                }
+                // if (Game.poleCharge && this.round == 1) {
+                //     this.hero1.setCharging(true);
+                //     this.hero2.setCharging(true);
+                // } else {
+                //     this.hero1.setCharging(false);
+                //     this.hero2.setCharging(true);
+                // }
 
+                this.hero1.setCharging((this.poleCharge) && (this.round == 1));
+                this.hero2.setCharging((this.poleCharge) && (this.round == 1));
 
                 /*
                  * Decide if defending
@@ -146,6 +152,8 @@
 
     function resolveAttack(game, attacker, attackee, roll, numDice) {
         var facingBonus = attacker.isProne();
+        
+        if (attacker.isCharging()) Logger.log("Charging with pole weapon.")
 
         Logger.log(attacker.getName() + " rolling to hit. Rolled " + roll + " and adjDex is "
             + (attackee.isProne() ? (attacker.adjustedDx() + facingBonus + " (" + attacker.adjustedDx() + " + " + facingBonus + ", target is picking up a weapon)")
