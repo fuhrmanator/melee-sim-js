@@ -57,8 +57,8 @@
                 /*
                  * Decide if defending
                  */
-                tryDefending(this.hero1, this.hero2);
-                tryDefending(this.hero2, this.hero1);
+                tryDefending(this.hero1, this.hero2, this.defendOnPoleCharge);
+                tryDefending(this.hero2, this.hero1, this.defendOnPoleCharge);
 
                 var firstAttacker = this.hero1, secondAttacker = this.hero2;
             
@@ -114,7 +114,7 @@
     /**
      * Private (static) functions, must be passed a "this" if you need access to Game
      */
-    function tryDefending(defender, attacker) {
+    function tryDefending(defender, attacker, defendOnPoleCharge) {
         if (!defender.isKnockedDown()
             && defender.getReadiedWeapon() !== Weapon.NONE
             && defender.sufferingDexPenalty()
@@ -123,7 +123,7 @@
 
             Logger.log(defender.getName() + " is defending this turn because adjDX < 8 and temporarily penalized.");
         }
-        else if (Game.defendOnPoleCharge
+        else if (defendOnPoleCharge
             && !defender.isKnockedDown()
             && defender.getReadiedWeapon() !== Weapon.NONE
             && attacker.getReadiedWeapon() !== Weapon.NONE
