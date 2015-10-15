@@ -5,7 +5,7 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
     var isDefendVsPoleChargeChecked = false;
     var isVerboseChecked = false;
 
-    function createTableFromProperties(heroWins, isVersus) {
+    function createTableFromProperties(heroWins, totalCount, isVersus) {
         var tbl = document.createElement("table");
         tbl.style.width = "100%"
         tbl.className = "sortable";  // sorttable.js is the hook
@@ -26,6 +26,12 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
         }
         td = document.createElement('td');
         td.appendChild(document.createTextNode("Wins"));
+        td.setAttribute("align", "right");
+        tr.appendChild(td);
+        tbhead.appendChild(tr);
+        td = document.createElement('td');
+        td.setAttribute("align", "right");
+        td.appendChild(document.createTextNode("% total"));
         tr.appendChild(td);
         tbhead.appendChild(tr);
         tbl.appendChild(tbhead);
@@ -47,7 +53,12 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
                 }
                 // add the column for the number of wins
                 td = document.createElement('td');
+                td.setAttribute("align", "right");
                 td.appendChild(document.createTextNode(heroWins[property]));
+                tr.appendChild(td);
+                td = document.createElement('td');
+                td.setAttribute("align", "right");
+                td.appendChild(document.createTextNode("" + ((heroWins[property]/totalCount) * 100).toFixed(2)));
                 tr.appendChild(td);
                 tbdy.appendChild(tr);
             }
@@ -120,11 +131,17 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
                         break;
 
                     case 'finished':
-                        var heroWinsTable = createTableFromProperties(data.heroWins, false);
+                        var resultsTitle = document.createElement("p");
+                        resultsTitle.appendChild(document.createTextNode("Results for " + selectedHeroes.length + " heroes, paired up for " + boutCount + " bouts each:"));
+                        document.getElementById("heroWins").appendChild(resultsTitle);
+                        var heroWinsTable = createTableFromProperties(data.heroWins, (selectedHeroes.length - 1) * boutCount, false);
                         document.getElementById("heroWins").appendChild(heroWinsTable);
                         sorttable.makeSortable(heroWinsTable);
 
-                        var matchupWinsTable = createTableFromProperties(data.matchupWins, true);
+                        resultsTitle = document.createElement("p");
+                        resultsTitle.appendChild(document.createTextNode("Results for " + selectedHeroes.length + " heroes, paired up for " + boutCount + " bouts each:"));
+                        document.getElementById("matchupWins").appendChild(resultsTitle);
+                        var matchupWinsTable = createTableFromProperties(data.matchupWins, boutCount, true);
                         document.getElementById("matchupWins").appendChild(matchupWinsTable);
                         sorttable.makeSortable(matchupWinsTable);
 

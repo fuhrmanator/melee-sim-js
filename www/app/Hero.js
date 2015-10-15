@@ -112,13 +112,13 @@
         this.injuryDexPenalty = this.sufferingDexPenalty();
 
         if (this.injuryDexPenalty) Logger.log(this.name + " has an adjDx penalty of -2 for remainder of this round and the NEXT round.\n");
-        Logger.log(this.name + " has now taken " + this.damageTaken + " points of damage, ST = " + this.st + "\n");
+        Logger.log(this.name + " has now taken " + this.damageTaken + " points of damage, ST = " + this.st + (this.damage>=this.st ? " and is DEAD." : (this.st - this.damage == 1 ? " and is UNCONSCIOUS." : ".")));
 
         if (this.damageTakenThisRound >= 8) {
             this.knockedDown = true;
-            Logger.log(this.name + " has been knocked down by damage.\n");
+            Logger.log(this.name + " has been knocked down by damage.");
         }
-        if (this.isStrengthLowPenalty()) Logger.log(this.name + " has an additional DX adjustment of -3 due to ST <= 3.\n");
+        if (this.isStrengthLowPenalty()) Logger.log(this.name + " has an additional DX adjustment of -3 due to ST <= 3.");
 
     }
 
