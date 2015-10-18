@@ -46,7 +46,9 @@
             damage += Die.roll();
         }
         damage += this.modifier;
+        if (this.modifier != 0) Logger.log(((this.modifier > 0) ? "+" : "") + this.modifier);
         if (damage < 0) damage = 0;
+        Logger.log("Total weapon damage: " + damage);
         return damage;
     }
 

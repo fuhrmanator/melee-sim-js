@@ -166,6 +166,7 @@
 
     Hero.prototype.breakWeapon = function () {
         this.readiedWeapon = Weapon.NONE;
+        this.droppedWeapon = Weapon.NONE; // shouldn't need this, but just in case
     };
 
     Hero.prototype.getDroppedWeapon = function () {
@@ -192,8 +193,8 @@
         return this.name + "\n" + this.armor.toString() + "\n" + this.readiedWeapon.toString();
     }
     
-    Hero.prototype.isDead = function () {
-        return this.damageTaken >= this.st;
+    Hero.prototype.canDoDamage = function () {
+        return this.isConscious() && (this.readiedWeapon !== Weapon.NONE || this.droppedWeapon !== Weapon.NONE);
     }
 
     // And now return the constructor function

@@ -16,8 +16,6 @@
     }
 
     Die.rollDice = function (numDice) {
-        Logger.log(
-            "Rolling " + numDice + " dice...");
         var result = 0;
         for (var i = 0; i < numDice; i++) {
             result += Die.roll();

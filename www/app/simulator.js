@@ -64,6 +64,7 @@ require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Ga
                 Logger.log('Matchup: ' + hero1.getName() + ' vs. ' + hero2.getName());
 
                 for (var bout = 0; bout < boutCount; bout++) {
+                    Logger.log("Bout: " + bout+1 + " of " + boutCount);
                     /**
                     * update progress bar on page (assumes max is 100)
                     */

@@ -27,12 +27,14 @@
         constructor: Game,
         fightToTheDeath: function () {
             var winner = null;
-            while (this.hero1.isConscious() && this.hero2.isConscious() &&
-                ((this.hero1.getDroppedWeapon() !== Weapon.NONE
-                    || this.hero1.getReadiedWeapon() !== Weapon.NONE)
-                    || (this.hero2.getDroppedWeapon() !== Weapon.NONE
-                        || this.hero2.getReadiedWeapon() !== Weapon.NONE))
-                ) {
+            /**
+             * As long as both are still conscious and at least one can do damage
+             * Note: even though one hero breaks a weaon, the other could also
+             * break it resulting in a tie. 
+             * No HTH is considered.
+             * No second weapon is considered.
+             */
+            while ((this.hero1.isConscious() && this.hero2.isConscious()) && (this.hero1.canDoDamage() || this.hero2.canDoDamage())) {
                 this.round++;
                 this.hero1.newRound();
                 this.hero2.newRound();
@@ -41,24 +43,6 @@
                 Logger.log("---> Round " + this.round);
                 Logger.log("Hero 1: " + this.hero1.getName() + ", ST: " + this.hero1.getST() + "(" + this.hero1.adjST() + ")");
                 Logger.log("Hero 2: " + this.hero2.getName() + ", ST: " + this.hero2.getST() + "(" + this.hero2.adjST() + ")");
-
-                /* Charge attack */
-                // if (Game.poleCharge && this.round == 1) {
-                //     this.hero1.setCharging(true);
-                //     this.hero2.setCharging(true);
-                // } else {
-                //     this.hero1.setCharging(false);
-                //     this.hero2.setCharging(true);
-                // }
-
-                this.hero1.setCharging((this.poleCharge) && (this.round == 1));
-                this.hero2.setCharging((this.poleCharge) && (this.round == 1));
-
-                /*
-                 * Decide if defending
-                 */
-                tryDefending(this.hero1, this.hero2, this.defendOnPoleCharge);
-                tryDefending(this.hero2, this.hero1, this.defendOnPoleCharge);
 
                 var firstAttacker = this.hero1, secondAttacker = this.hero2;
             
@@ -82,6 +66,12 @@
                     ") attacks before " + secondAttacker.getName() +
                     " (adjDx = " + secondAttacker.adjustedDx() + ")");
 
+                this.hero1.setCharging((this.poleCharge) && (this.round == 1) && this.hero1.getReadiedWeapon().isPole());
+                this.hero2.setCharging((this.poleCharge) && (this.round == 1) && this.hero2.getReadiedWeapon().isPole());
+
+                tryDefending(this.hero1, this.hero2, this.defendOnPoleCharge);
+                tryDefending(this.hero2, this.hero1, this.defendOnPoleCharge);
+
                 tryStandUp(firstAttacker);
                 tryStandUp(secondAttacker);
                 tryPickUp(firstAttacker);
@@ -89,21 +79,19 @@
                 tryAttack(this, firstAttacker, secondAttacker);
                 tryAttack(this, secondAttacker, firstAttacker);
             }
-            
-            /* both broke/dropped weapons, draw */
-            if (this.hero1.isConscious() && this.hero2.isConscious()) {
+
+            if (this.hero1.canDoDamage()) {
+                winner = this.hero1;
+            } else if (this.hero2.canDoDamage()) {
+                winner = this.hero2;
+            } else {
                 winner = null;
-            }
-            else {
-                winner = (this.hero1.isConscious() ? this.hero1 : this.hero2);
             }
 
             if (winner != null) {
-
                 Logger.log("-------> The winner of this bout is " + winner.getName());
             }
             else {
-
                 Logger.log("-------> This bout was a TIE!");
             }
             return winner;
@@ -119,8 +107,8 @@
             && defender.getReadiedWeapon() !== Weapon.NONE
             && defender.sufferingDexPenalty()
             && defender.adjustedDx() < 8) {
-            defender.setDefending();
 
+            defender.setDefending();
             Logger.log(defender.getName() + " is defending this turn because adjDX < 8 and temporarily penalized.");
         }
         else if (defendOnPoleCharge
@@ -128,9 +116,11 @@
             && defender.getReadiedWeapon() !== Weapon.NONE
             && attacker.getReadiedWeapon() !== Weapon.NONE
             && attacker.getReadiedWeapon().isPole()
-            && attacker.isCharging()) {
-            defender.setDefending();
+            && attacker.isCharging()
+            && !defender.isCharging()  // don't defend if also charging with pole weapon
+            ) {
 
+            defender.setDefending();
             Logger.log(defender.getName() + " is defending this turn because attacker is charging with pole weapon.");
         }
     }
@@ -151,11 +141,9 @@
     }
 
     function resolveAttack(game, attacker, attackee, roll, numDice) {
-        var facingBonus = 4;
-        
-        if (attacker.isCharging()) Logger.log("Charging with pole weapon.");
-        
-        Logger.log(attacker.getName() + " rolling to hit. Rolled " + roll + " and adjDex is "
+        var facingBonus = attackee.isProne() ? 4 : 0;
+
+        Logger.log(attacker.getName() + " rolled " + roll + " and adjDex is "
             + (attackee.isProne() ? (attacker.adjustedDx() + facingBonus + " (" + attacker.adjustedDx() + " + " + facingBonus + ", target is prone, i.e., knocked down or picking up a weapon)")
                 : attacker.adjustedDx()));
 
@@ -207,31 +195,31 @@
     };
 
     function tryAttack(game, attacker, attackee) {
+        Logger.log(attacker.getName() + " gets his turn to attack.");
         if (!attacker.isDefending()) {
             if (attacker.isConscious()) {
                 if (!attacker.isKnockedDown()) {
                     if (attacker.getReadiedWeapon() !== Weapon.NONE) {
+                        if (attacker.isCharging()) Logger.log("He's charging with pole weapon (double damage if he hits).");
                         var numDice = attackee.isDefending() ? 4 : 3;
+                        Logger.log("Rolling to hit on " + numDice + " dice.");
                         resolveAttack(game, attacker, attackee,
                             Die.rollDice(numDice), numDice);
                     } else {
 
-                        Logger.log(attacker.getName()
-                            + " is not able to attack because he has has no readied weapon.");
+                        Logger.log("But he's not able to attack because he has has no readied weapon.");
                     }
                 } else {
 
-                    Logger.log(attacker.getName()
-                        + " is not able to attack because he was knocked down.");
+                    Logger.log("But he's not able to attack because he was knocked down.");
                 }
             } else {
 
-                Logger.log(attacker.getName()
-                    + " is not able to attack because he is " + (attacker.isDead() ? "dead." : "unconscious."));
+                Logger.log("But he's not able to attack because he's " + (attacker.isAlive() ? "unconscious." : "dead."));
             }
         } else {
 
-            Logger.log(attacker.getName() + " is defending.");
+            Logger.log("But he's defending.");
         }
 
     };
