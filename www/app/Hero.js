@@ -94,10 +94,10 @@
         if (damageDone < 0) damageDone = 0;
 
 
-        Logger.log(this.name + " taking " + hits + " hits.\n");
-        Logger.log(this.armor.getName() + " stops " + this.armor.hitsStopped() + "\n");
-        Logger.log(this.shield.getName() + " stops " + this.shield.hitsStopped() + "\n");
-        Logger.log(this.name + " taking " + damageDone + " damage.\n");
+        Logger.log(this.name + " taking " + hits + " hits.");
+        Logger.log(this.armor.getName() + " stops " + this.armor.hitsStopped() );
+        Logger.log(this.shield.getName() + " stops " + this.shield.hitsStopped());
+        Logger.log(this.name + " taking " + damageDone + " damage.");
 
         this.takeDamage(damageDone);
         return damageDone;
@@ -111,8 +111,8 @@
         this.damageTakenThisRound += damageDone;
         this.injuryDexPenalty = this.sufferingDexPenalty();
 
-        if (this.injuryDexPenalty) Logger.log(this.name + " has an adjDx penalty of -2 for remainder of this round and the NEXT round.\n");
-        Logger.log(this.name + " has now taken " + this.damageTaken + " points of damage, ST = " + this.st + (this.damage>=this.st ? " and is DEAD." : (this.st - this.damage == 1 ? " and is UNCONSCIOUS." : ".")));
+        if (this.injuryDexPenalty) Logger.log(this.name + " has an adjDx penalty of -2 for remainder of this round and the NEXT round.");
+        Logger.log(this.name + " has now taken " + this.damageTaken + " points of damage, ST = " + this.st + (this.damageTaken >=this.st ? " and is DEAD." : (this.st - this.damageTaken == 1 ? " and is UNCONSCIOUS." : ".")));
 
         if (this.damageTakenThisRound >= 8) {
             this.knockedDown = true;
@@ -189,7 +189,11 @@
     };
 
     Hero.prototype.toString = function () {
-        return "\n" + this.name + "\n" + this.armor.toString() + "\n" + this.readiedWeapon.toString();
+        return this.name + "\n" + this.armor.toString() + "\n" + this.readiedWeapon.toString();
+    }
+    
+    Hero.prototype.isDead = function () {
+        return this.damageTaken >= this.st;
     }
 
     // And now return the constructor function

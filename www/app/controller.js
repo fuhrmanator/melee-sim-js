@@ -58,7 +58,7 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
                 tr.appendChild(td);
                 td = document.createElement('td');
                 td.setAttribute("align", "right");
-                td.appendChild(document.createTextNode("" + ((heroWins[property]/totalCount) * 100).toFixed(2)));
+                td.appendChild(document.createTextNode("" + ((heroWins[property] / totalCount) * 100).toFixed(2)));
                 tr.appendChild(td);
                 tbdy.appendChild(tr);
             }
@@ -94,6 +94,8 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
             startButton.disabled = true;
             var progressBar = document.getElementById("progress");
             progressBar.value = 0;
+            var verboseOutputText = document.getElementById("verboseOutputText");
+            verboseOutputText.value = "";
             
             /**
              * Clear results from previous run 
@@ -110,6 +112,7 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
             console.log('Starting simulation');
             var selectElement = document.getElementById("heroesSelected");
             var selectedHeroes = getSelectedValues(selectElement);
+            var logBuffer = "";
             //console.log(heroSet);
             
             var boutCount = document.getElementById("boutsPerMatchup").value;
@@ -123,7 +126,11 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
                 switch (data.cmd) {
                     case 'worker started':
                         // give worker the info
-                        worker.postMessage({ 'selectedHeroes': selectedHeroes, 'boutCount': boutCount, 'isPoleWeaponsChargeFirstRound': isPoleWeaponsChargeFirstRoundChecked, 'isDefendVsPoleCharge': isDefendVsPoleChargeChecked, 'isVerbose':isVerboseChecked });
+                        worker.postMessage({ 'selectedHeroes': selectedHeroes, 'boutCount': boutCount, 'isPoleWeaponsChargeFirstRound': isPoleWeaponsChargeFirstRoundChecked, 'isDefendVsPoleCharge': isDefendVsPoleChargeChecked, 'isVerbose': isVerboseChecked });
+                        break;
+
+                    case 'log':
+                        logBuffer += data.message + "\n";
                         break;
 
                     case 'progressUpdate':
@@ -144,6 +151,8 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
                         var matchupWinsTable = createTableFromProperties(data.matchupWins, boutCount, true);
                         document.getElementById("matchupWins").appendChild(matchupWinsTable);
                         sorttable.makeSortable(matchupWinsTable);
+                        
+                        verboseOutputText.value = logBuffer;                        
 
                         startButton.disabled = false;
                         break;

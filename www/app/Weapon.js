@@ -39,7 +39,7 @@
 							+ "d"
 							+ ((this.modifier > 0) ? "+" : "")
 							+ ((this.modifier != 0) ? this.modifier : "")
-							+ " damage.\n");
+							+ " damage.");
         var damage = 0;
         for (var i = 0; i < this.dice; i++)
         {

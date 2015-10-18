@@ -151,12 +151,12 @@
     }
 
     function resolveAttack(game, attacker, attackee, roll, numDice) {
-        var facingBonus = attacker.isProne();
+        var facingBonus = 4;
         
-        if (attacker.isCharging()) Logger.log("Charging with pole weapon.")
-
+        if (attacker.isCharging()) Logger.log("Charging with pole weapon.");
+        
         Logger.log(attacker.getName() + " rolling to hit. Rolled " + roll + " and adjDex is "
-            + (attackee.isProne() ? (attacker.adjustedDx() + facingBonus + " (" + attacker.adjustedDx() + " + " + facingBonus + ", target is picking up a weapon)")
+            + (attackee.isProne() ? (attacker.adjustedDx() + facingBonus + " (" + attacker.adjustedDx() + " + " + facingBonus + ", target is prone, i.e., knocked down or picking up a weapon)")
                 : attacker.adjustedDx()));
 
         /**
@@ -227,7 +227,7 @@
             } else {
 
                 Logger.log(attacker.getName()
-                    + " is not able to attack because he is unconscious.");
+                    + " is not able to attack because he is " + (attacker.isDead() ? "dead." : "unconscious."));
             }
         } else {
 

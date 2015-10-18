@@ -11,7 +11,8 @@ define(function () {
     var isMute = false;
 
     Logger.log = function (message) {
-        if (!isMute) console.log(message);
+        // if (!isMute) console.log(message);
+        if (!isMute) postMessage({ "cmd": "log", "message": message });
     }
 
     Logger.setMute = function (changeIsMute) {

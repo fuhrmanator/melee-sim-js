@@ -11,13 +11,13 @@
     Die.roll = function () {
         var roll = Math.floor(Math.random() * 6 + 1);
         Logger.log(
-            "Die roll: " + roll + "\n");
+            "Die roll: " + roll);
         return roll;
     }
 
     Die.rollDice = function (numDice) {
         Logger.log(
-            "Rolling " + numDice + " dice...\n");
+            "Rolling " + numDice + " dice...");
         var result = 0;
         for (var i = 0; i < numDice; i++) {
             result += Die.roll();
