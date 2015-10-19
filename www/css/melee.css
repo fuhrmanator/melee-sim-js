@@ -1,48 +1,30 @@
-h1 {
-	font-family: MedievalSharp;
-	font-size: 24px;
-	font-style: normal;
-	font-variant: normal;
-	font-weight: 500;
-	line-height: 26.4px;
+body {
+  font-family: Arial, Helvetica, sans-serif;
 }
-h2 {
-	font-family: MedievalSharp;
-	font-size: 18px;
-	font-style: normal;
-	font-variant: normal;
-	font-weight: 500;
-	line-height: 15.4px;
+h1,h2,h3 {
+  font-family: MedievalSharp, Arial, Helvetica, sans-serif;
 }
-h3 {
-	font-family: MedievalSharp;
-	font-size: 14px;
-	font-style: normal;
-	font-variant: normal;
-	font-weight: 500;
-	line-height: 15.4px;
+
+/* http://www.kryogenix.org/code/browser/sorttable/#symbolsbeforesorting */
+table.sortable th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):not(.sorttable_nosort):after { 
+    content: " \25B4\25BE" 
 }
-p {
-	font-family: MedievalSharp;
-	font-size: 14px;
-	font-style: normal;
-	font-variant: normal;
-	font-weight: 400;
-	line-height: 20px;
+/* http://www.kryogenix.org/code/browser/sorttable/#lefthandheader */
+table.sortable tbody {
+    counter-reset: sortabletablescope;
 }
-blockquote {
-	font-family: MedievalSharp;
-	font-size: 17.5px;
-	font-style: normal;
-	font-variant: normal;
-	font-weight: 400;
-	line-height: 25px;
+table.sortable thead tr::before {
+    content: "";
+    display: table-cell;
 }
-pre {
-	font-family: MedievalSharp;
-	font-size: 13px;
-	font-style: normal;
-	font-variant: normal;
-	font-weight: 400;
-	line-height: 18.5714px;
+table.sortable tbody tr::before {
+    content: counter(sortabletablescope);
+    counter-increment: sortabletablescope;
+    display: table-cell;*/
+}
+
+/* http://stackoverflow.com/a/25517025/1168342 */
+.vertical-align {
+    display: flex;
+    align-items: center;
 }

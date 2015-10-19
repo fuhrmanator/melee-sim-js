@@ -72,7 +72,7 @@
 
     // pole weapons
     Weapon.JAVELIN = new Weapon("Javelin", 9, 1, -1, true, false, true);
-    Weapon.SPEAR = new Weapon("Spear", 11, 1, 2, true, true, true);
+    Weapon.SPEAR = new Weapon("Spear", 11, 1, 1, true, true, true);
     Weapon.HALBERD = new Weapon("Halberd", 13, 2, -1, false, true, true);
     Weapon.PIKE_AXE = new Weapon("Pike axe", 15, 2, 2, false, true, true);    // And now return the constructor function
     

@@ -34,4 +34,6 @@ define(function (require) {
     var selectElement = document.getElementById("heroesSelected");
     selectElement.size = HeroesSingleton.getListHeight();
     document.getElementById('startSimulation').onclick = controller.start;
+    document.getElementById('stopSimulation').onclick = controller.stop;
+
 });

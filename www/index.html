@@ -1,33 +1,82 @@
 <html lang="en">
-	<head>
-        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=MedievalSharp" />
-        <link rel="stylesheet" type="text/css" href="css/melee.css" />
-        <title>Melee simulator</title>
-        <script src="app/sorttable.js"></script>
-        <script data-main="app" src="lib/require.js"></script>
-    </head>
-	<body>
-		
-        <h1>Melee simulator</h1>
-        <p>Select the starting heros from the following list. Use CTRL/CMD to select multiple heros.</p>
-        <p>
-            <select id="heroesSelected" draggable="true" multiple="multiple">
-            </select></p>
-		
-	    <p>
-            <input id="startSimulation" type="button" value="Start" /> Progress: <progress id="progress" value="0" max="100"></progress></p>
-            <p>Bouts per matchup: <INPUT id="boutsPerMatchup" TYPE="NUMBER" MIN="1" MAX="10000" STEP="1" VALUE="20" SIZE="6"></p>
-            <p><input id="poleWeaponsChargeFirstRound" type="checkbox" />Pole weapons charge first round</p>
-            <p><input id="defendVsPoleCharge" type="checkbox" />Defend vs pole charge</p>
-            <p><input id="verboseOutput" type="checkbox" />Verbose output (caution!)</p>
-            
-        <h2>Total wins</h2>
-        <p>This is a sortable table - click column headings to sort.</p> 
-		<div id="heroWins"><p>(No data generated yet. Select heroes and click Start.)</p></div>
-        <h2>Matched up wins</h2>
-        <p>This is a sortable table - click column headings to sort.</p> 
-		<div id="matchupWins"><p>(No data generated yet. Select heroes and click Start.)</p></div>
-        <h2>Verbose output</h2>
-        <textarea id="verboseOutputText" readonly rows="30" cols="80" ></textarea>
-	</body>
+<head>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=MedievalSharp" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/melee.css" />
+    <title>Melee simulator</title>
+    <script src="app/sorttable.js"></script>
+    <script data-main="app" src="lib/require.js"></script>
+    <link rel="apple-touch-icon" sizes="57x57" href="apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="manifest.json">
+    <link rel="mask-icon" href="safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="msapplication-TileImage" content="/mstile-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+</head>
+<body>
+
+    <h1>Melee simulator</h1>
+    <p><a href="mailto:fuhrmanator@gmail.com">fuhrmanator@gmail.com</a>. Find the <a href="https://github.com/fuhrmanator/melee-sim-js">source code on Github</a>.</p>
+    <div class="row vertical-align">
+        <div class="col-xs-8">
+            <label for="heroesSelected">Select the starting heroes from the following list. Use CTRL/CMD to select multiple heroes.</label>
+            <select class="form-control" id="heroesSelected" multiple="multiple">
+            </select>
+        </div>
+        <div class="col-xs-4">
+            <img class=" center-block img-responsive" src="https://40.media.tumblr.com/b03b6579dd9377db8dfb7af10ba82402/tumblr_nus153xbqw1ro2bqto1_500.jpg" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label>
+            Bouts per matchup:
+        <input id="boutsPerMatchup" type="NUMBER" min="1" max="10000" step="1" value="20"></label>
+        <div class="checkbox">
+            <label>
+                <input id="poleWeaponsChargeFirstRound" type="checkbox" />Pole weapons charge first round</label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input id="defendVsPoleCharge" type="checkbox" />Defend vs pole charge</label>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input id="verboseOutput" type="checkbox" />Verbose output (caution!)</label>
+        </div>
+        <button id="startSimulation" class="btn btn-primary">Start</button>
+        Progress: <progress id="progress" value="0" max="100"></progress>
+        <button id="stopSimulation" class="btn btn-danger" disabled>Stop</button>
+    </div>
+
+    <h2>Total wins</h2>
+    <!--    <div>This is a sortable table - click column headings to sort.</div>-->
+    <div id="heroWins" class="table-responsive">
+        <p>(No data generated yet. Select heroes and click Start.)</p>
+    </div>
+    <h2>Matched up wins</h2>
+    <!--    <div>This is a sortable table - click column headings to sort.</div>-->
+    <div id="matchupWins" class="table-responsive">
+        <p>(No data generated yet. Select heroes and click Start.)</p>
+    </div>
+    <div class="form-group">
+        <label for="verboseOutputText">Verbose output</label>
+        <textarea id="verboseOutputText" readonly rows="30" class="form-control"></textarea>
+    </div>
+
+</body>
 </html>

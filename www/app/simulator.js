@@ -6,15 +6,15 @@ require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Ga
     var poleWeaponsChargeFirstRound = null;
     var defendVsPoleCharge = null;
     
-    postMessage({ "cmd": "worker started" });
+    self.postMessage({ "cmd": "worker started" });
 
-    onmessage = function (event) {
+    self.addEventListener('message', function (event) {
         /**
          * Only one type of message to start this thread
          */
         var data = event.data;
         var heroSet = [];  // list of heroes to fight
-            
+
         Game.createHeroesMap();
         var completeHeroMap = Game.getHeroMap();
         data.selectedHeroes.forEach(function (heroName) {
@@ -30,7 +30,30 @@ require(["./HeroesSingleton", "./Hero", "./Armor", "./Shield", "./Weapon", "./Ga
         defendVsPoleCharge = data.isDefendVsPoleCharge;
 
         tryAllCombinations(heroSet, data.boutCount);
-    };
+    });
+    //onmessage = function (event) {
+    //    /**
+    //     * Only one type of message to start this thread
+    //     */
+    //    var data = event.data;
+    //    var heroSet = [];  // list of heroes to fight
+            
+    //    Game.createHeroesMap();
+    //    var completeHeroMap = Game.getHeroMap();
+    //    data.selectedHeroes.forEach(function (heroName) {
+    //        var hero = completeHeroMap[heroName];
+    //        heroSet.push(hero);
+    //    }, this);
+
+    //    /**
+    //     * Configure simulator options
+    //     */
+    //    Logger.setMute(!data.isVerbose);
+    //    poleWeaponsChargeFirstRound = data.isPoleWeaponsChargeFirstRound;
+    //    defendVsPoleCharge = data.isDefendVsPoleCharge;
+
+    //    tryAllCombinations(heroSet, data.boutCount);
+    //};
 
     //self.console.log("onmessage set... waiting for a message");
 
