@@ -1,23 +1,12 @@
-﻿// TODO take all game rules out of Hero, Armor, Weapon, etc. and move to Game class - this will decouple dependencies on Logger
-// TODO make JSON string for Heroes
-
-define(function (require) {
+﻿define(function (require) {
     "use strict";
-    // Load any app-specific modules
-    // with a relative require call,
-    // like:    
 
     var controller = require('./controller');
-
-    // Load library/vendor modules using
-    // full IDs, like:
-    //var print = require('print');
-
-    //print(messages.getHello());
-
-
     var HeroesSingleton = require('./HeroesSingleton');
 
+    /**
+     * Initialize list of heroes to be selected
+     */
     var select = document.getElementById("heroesSelected");
     var opt = null;
     var heroesListJSON = HeroesSingleton.getHeroesListJSON();
@@ -29,10 +18,12 @@ define(function (require) {
         select.appendChild(opt);        
     }
     
-    //HeroesSingleton.displayHeroesList();
-
     var selectElement = document.getElementById("heroesSelected");
     selectElement.size = HeroesSingleton.getListHeight();
+
+    /**
+     * Set up controller options
+     */
     document.getElementById('startSimulation').onclick = controller.start;
     document.getElementById('stopSimulation').onclick = controller.stop;
 
