@@ -44,9 +44,9 @@ require(["./HeroesSingleton", "./Hero", "./Game", "./controller", "./Logger"], f
         heroSet.forEach(function (hero1) {
             heroWins[hero1.getName()] = 0;
             heroSet.forEach(function (hero2) {
-                if (hero1 != hero2) matchupWins[hero1.getName() + "/" + hero2.getName()] = 0;
-            }, this);
-        }, this);
+                if (hero1 !== hero2) matchupWins[hero1.getName() + "/" + hero2.getName()] = 0;
+            });
+        });
         //console.log(heroWins);
 
         for (var h1 = 0; h1 < heroSet.length; h1++) {
@@ -78,8 +78,8 @@ require(["./HeroesSingleton", "./Hero", "./Game", "./controller", "./Logger"], f
                     var winningFighter = game.fightToTheDeath();
 
                     if (winningFighter !== null) {
-                        var losingFighter = (winningFighter == fightingHero1 ? fightingHero2 : fightingHero1);
-                        score[(winningFighter == fightingHero1 ? 0 : 1)]++;
+                        var losingFighter = (winningFighter === fightingHero1 ? fightingHero2 : fightingHero1);
+                        score[(winningFighter === fightingHero1 ? 0 : 1)]++;
                         matchupWins[winningFighter.getName() + "/" + losingFighter.getName()]++;
                     }
                     sumRounds += game.round;
@@ -96,16 +96,6 @@ require(["./HeroesSingleton", "./Hero", "./Game", "./controller", "./Logger"], f
          * Put stats back on page
          */
         self.postMessage({ "cmd": "finished", "heroWins": heroWins, "matchupWins": matchupWins });
-    }
-
-
-    function updateProgress() {
-        var progressBar = document.getElementById("progress");
-        if (progressBar.value < progressBar.max) {
-            setTimeout(updateProgress, 80);
-        } else {
-            return;
-        }
     }
 
 });

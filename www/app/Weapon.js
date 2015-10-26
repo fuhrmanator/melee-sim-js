@@ -22,39 +22,38 @@
     
     Weapon.prototype.isTwoHanded = function () {
         return this.isTwoHanded;
-    }
+    };
 
     Weapon.prototype.isThrown = function () {
         return this.isThrown;
-    }
+    };
 
     Weapon.prototype.isPole = function () {
         return this._isPole;
-    }
+    };
     
     Weapon.prototype.doDamage = function () {
-			Logger.log(
-					"Rolling for weapon doing "
-							+ this.dice
-							+ "d"
-							+ ((this.modifier > 0) ? "+" : "")
-							+ ((this.modifier != 0) ? this.modifier : "")
-							+ " damage.");
+        Logger.log(
+                "Rolling for weapon doing "
+                        + this.dice
+                        + "d"
+                        + ((this.modifier > 0) ? "+" : "")
+                        + ((this.modifier !== 0) ? this.modifier : "")
+                        + " damage.");
         var damage = 0;
-        for (var i = 0; i < this.dice; i++)
-        {
+        for (var i = 0; i < this.dice; i++) {
             damage += Die.roll();
         }
         damage += this.modifier;
-        if (this.modifier != 0) Logger.log(((this.modifier > 0) ? "+" : "") + this.modifier);
+        if (this.modifier !== 0) Logger.log(((this.modifier > 0) ? "+" : "") + this.modifier);
         if (damage < 0) damage = 0;
         Logger.log("Total weapon damage: " + damage);
         return damage;
-    }
+    };
 
     Weapon.prototype.toString = function () {
-        return this.name + " (" + this.dice + "D" + ((this.modifier > 0) ? "+" : "") + ((this.modifier != 0) ? this.modifier : "") + ")";
-    }
+        return this.name + " (" + this.dice + "D" + ((this.modifier > 0) ? "+" : "") + ((this.modifier !== 0) ? this.modifier : "") + ")";
+    };
 
     Weapon.NONE = new Weapon("None", 0, 0, 0, false, false, false);
     Weapon.DAGGER = new Weapon("Dagger", 0, 1, -1, true, false, false); 

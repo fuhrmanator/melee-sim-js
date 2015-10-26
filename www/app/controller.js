@@ -1,5 +1,5 @@
 ﻿/* global sorttable */
-define(["./HeroesSingleton"], function (HeroesSingleton) {
+define(function () {
     "use strict";
     var isPoleWeaponsChargeFirstRoundChecked = false;
     var isDefendVsPoleChargeChecked = false;
@@ -9,7 +9,7 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
 
     function createTableFromProperties(heroWins, totalCount, caption, isVersus) {
         var tbl = document.createElement("table");
-        tbl.style.width = "100%"
+        tbl.style.width = "100%";
         tbl.className = "sortable table table-striped table-condensed"; // bootstrap --> class="table table-striped"
         // tbl.className = "sortable";  // sorttable.js is the hook
         tbl.setAttribute("border", "0");
@@ -211,7 +211,7 @@ define(["./HeroesSingleton"], function (HeroesSingleton) {
              * Stop the web worker
              */
             var stopButton = this;
-            this.disabled = true;
+            stopButton.disabled = true;
             webWorker.terminate();
             /**
              * Clear results from previous run 

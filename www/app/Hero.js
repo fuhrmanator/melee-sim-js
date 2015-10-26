@@ -112,7 +112,7 @@
         this.injuryDexPenalty = this.sufferingDexPenalty();
 
         if (this.injuryDexPenalty) Logger.log(this.name + " has an adjDx penalty of -2 for remainder of this round and the NEXT round.");
-        Logger.log(this.name + " has now taken " + this.damageTaken + " points of damage, ST = " + this.st + (this.damageTaken >=this.st ? " and is DEAD." : (this.st - this.damageTaken == 1 ? " and is UNCONSCIOUS." : ".")));
+        Logger.log(this.name + " has now taken " + this.damageTaken + " points of damage, ST = " + this.st + (this.damageTaken >= this.st ? " and is DEAD." : (this.st - this.damageTaken === 1 ? " and is UNCONSCIOUS." : ".")));
 
         if (this.damageTakenThisRound >= 8) {
             this.knockedDown = true;
@@ -120,7 +120,7 @@
         }
         if (this.isStrengthLowPenalty()) Logger.log(this.name + " has an additional DX adjustment of -3 due to ST <= 3.");
 
-    }
+    };
 
     Hero.prototype.sufferingDexPenalty = function () {
         return (this.damageTakenThisRound >= 5 || this.recovering);
@@ -157,7 +157,7 @@
 
     Hero.prototype.getReadiedWeapon = function () {
         return this.readiedWeapon;
-    }
+    };
 
     Hero.prototype.dropWeapon = function () {
         this.droppedWeapon = this.readiedWeapon;
@@ -171,11 +171,11 @@
 
     Hero.prototype.getDroppedWeapon = function () {
         return this.droppedWeapon;
-    }
+    };
 
     Hero.prototype.pickUpWeapon = function () {
         this.pickingUpWeapon = true;
-    }
+    };
 
     Hero.prototype.getArmor = function () {
         return this.armor;
@@ -191,11 +191,11 @@
 
     Hero.prototype.toString = function () {
         return this.name + "\n" + this.armor.toString() + "\n" + this.readiedWeapon.toString();
-    }
+    };
     
     Hero.prototype.canDoDamage = function () {
         return this.isConscious() && (this.readiedWeapon !== Weapon.NONE || this.droppedWeapon !== Weapon.NONE);
-    }
+    };
 
     // And now return the constructor function
     return Hero;
