@@ -47,6 +47,7 @@ require(["./HeroesSingleton", "./Hero", "./Game", "./controller", "./Logger"], f
                 if (hero1 !== hero2) matchupWins[hero1.getName() + "/" + hero2.getName()] = 0;
             });
         });
+        var lastUpdateTime = new Date(); // for throttling updates
         //console.log(heroWins);
 
         for (var h1 = 0; h1 < heroSet.length; h1++) {
@@ -63,11 +64,19 @@ require(["./HeroesSingleton", "./Hero", "./Game", "./controller", "./Logger"], f
 
                 for (var bout = 0; bout < boutCount; bout++) {
                     Logger.log("Bout: " + bout + 1 + " of " + boutCount);
+                    iterationCount++;
                     /**
-                    * update progress bar on page (assumes max is 100)
-                    */
-                    progress = Math.ceil((++iterationCount / totalIterations) * 100);
-                    self.postMessage({ "cmd": "progressUpdate", "progress": progress });
+                     * Don't post updates too often
+                     */
+                    var currentTime = new Date();
+                    if (currentTime.getTime() - lastUpdateTime.getTime() > 200) {
+                       /**
+                        * update progress bar on page (assumes max is 10000)
+                        */
+                        progress = Math.ceil((iterationCount / totalIterations) * 100 * 100);
+                        self.postMessage({ "cmd": "progressUpdate", "progress": progress });
+                        lastUpdateTime = currentTime;
+                    }
 
                     // clone heroes (resets them) prior to fighting
                     var fightingHero1 = Object.create(hero1);

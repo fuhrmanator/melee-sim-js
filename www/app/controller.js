@@ -116,7 +116,9 @@ define(function () {
             var stopButton = document.getElementById("stopSimulation");
             stopButton.disabled = false;
             var progressBar = document.getElementById("progress");
-            progressBar.value = 0;
+            progressBar.style.width = 0 + "%";
+            progressBar.style.transition = "none"; // don't use bootstrap animation of progress bar
+            progressBar.classList.add("active"); // turn on animated striped bar
             var verboseOutputText = document.getElementById("verboseOutputText");
             verboseOutputText.value = "";
 
@@ -137,7 +139,6 @@ define(function () {
             // crunch the numbers in a web worker
             var worker = new Worker("app/simulator.js");
             webWorker = worker;
-            //worker.postMessage("hello");
             worker.addEventListener("message", function (event) {
                 var data = event.data;
                 //console.log("Web worker messaged me: " + event.data);
@@ -159,10 +160,15 @@ define(function () {
                         break;
 
                     case 'progressUpdate':
-                        progressBar.value = data.progress;
+                        //progressBar.value = data.progress;
+                        progressBar.style.width = (data.progress/100) + "%";
+                        //progressBar.setAttribute("aria-valuenow", data.progress);
                         break;
 
                     case 'finished':
+                        progressBar.style.width = "100%";
+                        progressBar.classList.remove("active"); // stop animated striped bar
+
                         /**
                          * Clear messages 
                          */
@@ -213,6 +219,10 @@ define(function () {
             var stopButton = this;
             stopButton.disabled = true;
             webWorker.terminate();
+
+            var progressBar = document.getElementById("progress");
+            progressBar.classList.remove("active"); // stop animated striped bar
+
             /**
              * Clear results from previous run 
              */

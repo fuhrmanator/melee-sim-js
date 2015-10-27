@@ -18,9 +18,6 @@
         select.appendChild(opt);        
     }
     
-    var selectElement = document.getElementById("heroesSelected");
-    selectElement.size = HeroesSingleton.getListHeight();
-
     /**
      * Set up controller options
      */
