@@ -2,7 +2,7 @@
     "use strict";
     // Pattern from http://stackoverflow.com/a/10280735/1168342
     // Start with the constructor
-    function Weapon(name, st, dice, modifier, isTwoHanded, isThrown, isPole) {
+    function Weapon(name, st, dice, modifier, isThrown, isTwoHanded, isPole) {
         if (!(this instanceof Weapon)) {
             throw new TypeError("Weapon constructor cannot be called as a function.");
         }
@@ -10,8 +10,8 @@
         this.st = st;
         this.dice = dice;
         this.modifier = modifier;
-        this.isTwoHanded = isTwoHanded;
-        this.isThrown = isThrown;
+        this._isTwoHanded = isTwoHanded;
+        this._isThrown = isThrown;
         this._isPole = isPole;
     }
 
@@ -20,12 +20,24 @@
         return this.name;
     };
     
+    Weapon.prototype.getST = function () {
+        return this.st;
+    };
+    
+    Weapon.prototype.getDice = function () {
+        return this.dice;
+    };
+    
+    Weapon.prototype.getModifier = function () {
+        return this.modifier;
+    };
+    
     Weapon.prototype.isTwoHanded = function () {
-        return this.isTwoHanded;
+        return this._isTwoHanded;
     };
 
     Weapon.prototype.isThrown = function () {
-        return this.isThrown;
+        return this._isThrown;
     };
 
     Weapon.prototype.isPole = function () {
@@ -63,7 +75,7 @@
     Weapon.CUTLASS = new Weapon("Cutlass", 10, 2, -2, false, false, false);
     Weapon.SHORTSWORD = new Weapon("Shortsword", 11, 2, -1, false, false, false);
     Weapon.MACE = new Weapon("Mace", 11, 2, -1, true, false, false);
-    Weapon.SMALL_AX = new Weapon("Small ax", 11, 1, 2, false, false, false);
+    Weapon.SMALL_AX = new Weapon("Small ax", 11, 1, 2, true, false, false);
     Weapon.BROADSWORD = new Weapon("Broadsword", 12, 2, 0, false, false, false);
     Weapon.MORNINGSTAR = new Weapon("Morningstar", 13, 2, 1, false, false, false);
     Weapon.TWO_HANDED_SWORD = new Weapon("Two-handed sword", 14, 3, -1, false, true, false);

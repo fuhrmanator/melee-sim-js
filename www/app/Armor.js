@@ -21,6 +21,10 @@
         return this.dxAdj;
     }
 
+    Armor.prototype.getMAAdjustment = function () {
+        return this.maAdj;
+    }
+
     Armor.prototype.toString = function () {
         return this.name + " (" + this._hitsStopped + ")";
     }

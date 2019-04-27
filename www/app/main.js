@@ -16,7 +16,7 @@
         opt.value = heroJSON.name;
         opt.innerHTML = heroJSON.name;
         select.appendChild(opt);        
-    }
+    } 
     
     /**
      * Set up controller options
