@@ -114,32 +114,22 @@ define(['bunit', 'Hero', 'Weapon', 'Armor', 'Shield', 'assert'], function (bunit
             o.hero.newRound();
             assert(o.hero.sufferingDexPenalty()).not();
         },
+        pickUpWeaponAfterOneCompleteRound: function (o) {
+            let hero = o.heroBroadswordLeather;
+            hero.dropWeapon();
+            assert(hero.getReadiedWeapon()).equals(Weapon.NONE);
+            hero.newRound();
+            assert(hero.getReadiedWeapon()).equals(Weapon.NONE);
+            hero.pickUpWeapon();
+            assert(hero.getReadiedWeapon()).equals(Weapon.NONE);
+            hero.newRound();
+            assert(hero.getReadiedWeapon()).equals(Weapon.BROADSWORD);
+        },
+        advanceRoundDoesNotChangeAnything: function (o) {
+            let hero = o.heroBroadswordLeather;
+            hero.newRound();
+            assert(hero.getReadiedWeapon()).equals(Weapon.BROADSWORD);
+        },
     });
 
 });
-
-// "Dex penalty lasts one complete round"
-// hero := MSHero name: 'Joe' st: 12 dx: 12 weapon: MSWeapon none armor: MSArmor none shield: MSShield none.
-// hero takeHits: 5.
-// self assert: hero hasDxPenaltyFromInjuries.	
-// "end of (partial) round when injury sustained"
-// hero newRound.
-// self assert: hero hasDxPenaltyFromInjuries.
-// "end of one complete round"
-// hero newRound.
-// self deny: hero hasDxPenaltyFromInjuries.
-
-// "Pick up weapon after one complete round"
-// hero := MSHero name: 'Joe' st: 12 dx: 12 weapon: MSWeapon dagger armor: MSArmor none shield: MSShield none.
-// hero dropWeapon.
-// self assert: hero readiedWeapon equals: MSWeapon none. 
-// hero newRound.
-// hero pickUpWeapon.
-// self assert: hero readiedWeapon equals: MSWeapon none. 
-// hero newRound.
-// self assert: hero readiedWeapon equals: MSWeapon dagger. 
-
-// "Advance round doesn't change anything"
-// hero := MSHero name: 'Joe' st: 12 dx: 12 weapon: MSWeapon dagger armor: MSArmor none shield: MSShield none.
-// hero newRound.
-// self assert: hero readiedWeapon equals: MSWeapon dagger.
