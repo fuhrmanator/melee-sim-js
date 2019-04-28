@@ -5,6 +5,7 @@ require({
             domReady: 'www/lib/domReady',
             Die: 'www/app/Die',
             Armor: 'www/app/Armor',
+            Hero: 'www/app/Hero',
             Shield: 'www/app/Shield',
             Weapon: 'www/app/Weapon',
             Logger: 'www/app/Logger'

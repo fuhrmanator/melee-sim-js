@@ -5,12 +5,14 @@
         this.name = name;
         this.st = st;
         this.dx = dx;
+        this.ma = 10; // hard-coded for humans
         this.readiedWeapon = weapon;
         this.armor = armor;
         this.shield = shield;
         this.knockedDown = false;
         this.standingUp = false;
         this.pickingUpWeapon = false;
+        this.weapon = weapon;
         this.droppedWeapon = Weapon.NONE;
 
         this.damageTaken = 0;
@@ -32,6 +34,14 @@
 
     Hero.prototype.adjST = function () {
         return Math.max(this.st - this.damageTaken, 0);
+    };
+
+    Hero.prototype.getMA = function () {
+        return this.ma;
+    };
+
+    Hero.prototype.adjustedMA = function () {
+        return this.ma - this.armor.getMAAdjustment();
     };
 
     Hero.prototype.getDX = function () {
