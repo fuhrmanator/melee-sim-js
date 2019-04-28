@@ -1,5 +1,5 @@
 define(['bunit', 'Hero', 'Weapon', 'Armor', 'Shield', 'assert'], function (bunit, Hero, Weapon, Armor, Shield, assert) {
-    bunit('Modifiers', {
+    bunit('Hero Modifiers', {
         setUp: function () {
             return {
                 hero: new Hero("Joe", 12, 12, Weapon.NONE, Armor.NO_ARMOR, Shield.NO_SHIELD),
@@ -33,6 +33,7 @@ define(['bunit', 'Hero', 'Weapon', 'Armor', 'Shield', 'assert'], function (bunit
             assert(o.heroOdd.getWeapon()).equals(Weapon.NONE);
         },
         getReadiedWeapon: function (o) {
+            assert(o.heroBroadswordLeather.getReadiedWeapon()).equals(Weapon.BROADSWORD);
             assert(o.heroOdd.getReadiedWeapon()).equals(Weapon.NONE);
         },
         getArmor: function (o) {
@@ -58,6 +59,87 @@ define(['bunit', 'Hero', 'Weapon', 'Armor', 'Shield', 'assert'], function (bunit
             assert(heroNew.isAlive()).not();
             assert(heroNew.canDoDamage()).not();
         },
+        damageTakenThisRound: function (o) {
+            assert(o.hero.damageTakenThisRound()).equals(0);
+            o.hero.takeHits(2);
+            assert(o.hero.damageTakenThisRound()).equals(2);
+            o.hero.takeHits(4);
+            assert(o.hero.damageTakenThisRound()).equals(6);
+            o.hero.takeHits(4);
+            assert(o.hero.damageTakenThisRound()).equals(10);
+        },
+        isAlive: function (o) {
+            assert(o.hero.isAlive());
+            o.hero.takeHits(12);
+            assert(o.hero.isAlive()).not();
+        },
+        name: function (o) {
+            assert(o.hero.getName()).equals('Joe');
+        },
+        // not need for simulator
+        // changeArmor: function (o) {
+        //     assert(o.hero.getArmor()).equals(Armor.NO_ARMOR);
+        //     o.hero.setArmor(Armor.LEATHER);
+        //     assert(o.hero.getArmor()).equals(Armor.LEATHER);
+        // },
+        dropWeapon: function (o) {
+            o.heroBroadswordLeather.dropWeapon();
+            assert(o.heroBroadswordLeather.getReadiedWeapon()).equals(Weapon.NONE);
+            assert(o.heroBroadswordLeather.getDroppedWeapon()).equals(Weapon.BROADSWORD);
+        },
+        pickUpWeapon: function (o) {
+            o.heroBroadswordLeather.dropWeapon();
+            assert(o.heroBroadswordLeather.isPickingUpWeapon()).not();
+            o.heroBroadswordLeather.pickUpWeapon();
+            assert(o.heroBroadswordLeather.isPickingUpWeapon());
+        },
+        breakWeapon: function (o) {
+            o.heroBroadswordLeather.breakWeapon();
+            assert(o.heroBroadswordLeather.getReadiedWeapon()).equals(Weapon.NONE);
+            assert(o.heroBroadswordLeather.getDroppedWeapon()).equals(Weapon.NONE);
+        },
+        newRoundResetsDamageTaken: function (o) {
+            o.hero.takeHits(2);
+            assert(o.hero.damageTakenThisRound()).equals(2);
+            o.hero.newRound();
+            assert(o.hero.damageTakenThisRound()).equals(0);
+        },
+        dexPenaltyLastsOneCompleteRound: function (o) {
+            assert(o.hero.sufferingDexPenalty()).not();
+            o.hero.takeHits(5);
+            assert(o.hero.sufferingDexPenalty());
+            o.hero.newRound();
+            assert(o.hero.damageTakenThisRound()).equals(0);
+            assert(o.hero.sufferingDexPenalty());
+            o.hero.newRound();
+            assert(o.hero.sufferingDexPenalty()).not();
+        },
     });
 
 });
+
+// "Dex penalty lasts one complete round"
+// hero := MSHero name: 'Joe' st: 12 dx: 12 weapon: MSWeapon none armor: MSArmor none shield: MSShield none.
+// hero takeHits: 5.
+// self assert: hero hasDxPenaltyFromInjuries.	
+// "end of (partial) round when injury sustained"
+// hero newRound.
+// self assert: hero hasDxPenaltyFromInjuries.
+// "end of one complete round"
+// hero newRound.
+// self deny: hero hasDxPenaltyFromInjuries.
+
+// "Pick up weapon after one complete round"
+// hero := MSHero name: 'Joe' st: 12 dx: 12 weapon: MSWeapon dagger armor: MSArmor none shield: MSShield none.
+// hero dropWeapon.
+// self assert: hero readiedWeapon equals: MSWeapon none. 
+// hero newRound.
+// hero pickUpWeapon.
+// self assert: hero readiedWeapon equals: MSWeapon none. 
+// hero newRound.
+// self assert: hero readiedWeapon equals: MSWeapon dagger. 
+
+// "Advance round doesn't change anything"
+// hero := MSHero name: 'Joe' st: 12 dx: 12 weapon: MSWeapon dagger armor: MSArmor none shield: MSShield none.
+// hero newRound.
+// self assert: hero readiedWeapon equals: MSWeapon dagger.

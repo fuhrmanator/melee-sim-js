@@ -1,1 +1,1 @@
-define(['./Die.js','./Armor.js','./Shield.js','./Weapon.js','./Hero.js']);
+define(['./Die.js','./Hero.js','./Armor.js','./Shield.js','./Weapon.js']);
