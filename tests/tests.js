@@ -1,0 +1,1 @@
+define(['./Die.js','./Hero.js','./Armor.js','./Shield.js','./Weapon.js']);

@@ -5,16 +5,18 @@
         this.name = name;
         this.st = st;
         this.dx = dx;
+        this.ma = 10; // hard-coded for humans
         this.readiedWeapon = weapon;
         this.armor = armor;
         this.shield = shield;
         this.knockedDown = false;
         this.standingUp = false;
         this.pickingUpWeapon = false;
+        this.weapon = weapon;
         this.droppedWeapon = Weapon.NONE;
 
         this.damageTaken = 0;
-        this.damageTakenThisRound = 0;
+        this._damageTakenThisRound = 0;
         this.injuryDexPenalty = false;
         this.recovering = false;
         this.defending = false;
@@ -34,12 +36,24 @@
         return Math.max(this.st - this.damageTaken, 0);
     };
 
+    Hero.prototype.getMA = function () {
+        return this.ma;
+    };
+
+    Hero.prototype.adjustedMA = function () {
+        return this.ma - this.armor.getMAAdjustment();
+    };
+
     Hero.prototype.getDX = function () {
         return this.dx;
     };
 
     Hero.prototype.adjustedDx = function () {
         return this.dx - this.armor.getDexAdjustment() - this.shield.getDexAdjustment() - (this.injuryDexPenalty ? 2 : 0) - (this.isStrengthLowPenalty() ? 3 : 0);
+    };
+
+    Hero.prototype.damageTakenThisRound = function () {
+        return this._damageTakenThisRound;
     };
 
     Hero.prototype.isAlive = function () {
@@ -64,7 +78,7 @@
     Hero.prototype.newRound = function () {
         this.charging = false;
         this.defending = false;
-        this.damageTakenThisRound = 0;
+        this._damageTakenThisRound = 0;
         if (this.standingUp) {
             this.knockedDown = false;
             this.standingUp = false;
@@ -108,13 +122,13 @@
      */
     Hero.prototype.takeDamage = function (damageDone) {
         this.damageTaken += damageDone;
-        this.damageTakenThisRound += damageDone;
+        this._damageTakenThisRound += damageDone;
         this.injuryDexPenalty = this.sufferingDexPenalty();
 
         if (this.injuryDexPenalty) Logger.log(this.name + " has an adjDx penalty of -2 for remainder of this round and the NEXT round.");
         Logger.log(this.name + " has now taken " + this.damageTaken + " points of damage, ST = " + this.st + (this.damageTaken >= this.st ? " and is DEAD." : (this.st - this.damageTaken === 1 ? " and is UNCONSCIOUS." : ".")));
 
-        if (this.damageTakenThisRound >= 8) {
+        if (this._damageTakenThisRound >= 8) {
             this.knockedDown = true;
             Logger.log(this.name + " has been knocked down by damage.");
         }
@@ -123,7 +137,7 @@
     };
 
     Hero.prototype.sufferingDexPenalty = function () {
-        return (this.damageTakenThisRound >= 5 || this.recovering);
+        return (this._damageTakenThisRound >= 5 || this.recovering);
     };
 
     Hero.prototype.isStrengthLowPenalty = function () {
@@ -148,6 +162,10 @@
     };
 
     Hero.prototype.isProne = function () {
+        return this.pickingUpWeapon;
+    };
+
+    Hero.prototype.isPickingUpWeapon = function () {
         return this.pickingUpWeapon;
     };
 
@@ -179,6 +197,10 @@
 
     Hero.prototype.getArmor = function () {
         return this.armor;
+    };
+
+    Hero.prototype.setArmor = function (armor) {
+        return this.armor = armor;
     };
 
     Hero.prototype.armorPoints = function () {
